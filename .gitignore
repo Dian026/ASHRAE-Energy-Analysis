@@ -1,0 +1,13 @@
+# Machine Learning models
+*.joblib
+
+# Python
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment
+.venv/
+.env
