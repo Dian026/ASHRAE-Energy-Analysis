@@ -507,7 +507,5 @@ Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
 
 ## Autor
 
-## Autor
-
 **Mamadou Dian Diallo**
 GitHub: [Dian026](https://github.com/Dian026)
