@@ -1,6 +1,3 @@
-# Machine Learning models
-*.joblib
-
 # Python
 __pycache__/
 *.pyc
@@ -8,6 +5,9 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Environment
+# Environnements
 .venv/
 .env
+
+# Machine Learning models
+*.joblib

@@ -7,9 +7,9 @@ from pathlib import Path
 
 import joblib
 import pandas as pd
+import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-
 
 # -----------------------------------------------------------------
 # 1. API erstellen
@@ -119,4 +119,47 @@ def predict_energy(data: PredictionInput):
         raise HTTPException(
             status_code=500,
             detail=f"Prediction error: {str(e)}"
+        )
+
+
+
+
+    # -----------------------------------------------------------------
+# 6. Weather Endpoint
+# -----------------------------------------------------------------
+
+@app.get("/weather")
+def get_weather(
+    latitude: float = 51.2277,
+    longitude: float = 6.7735
+):
+    try:
+
+        response = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": latitude,
+                "longitude": longitude,
+                "current": "temperature_2m,wind_speed_10m",
+                "timezone": "auto"
+            },
+            timeout=10
+        )
+
+        response.raise_for_status()
+
+        data = response.json()
+
+        return {
+            "latitude": latitude,
+            "longitude": longitude,
+            "temperature": data["current"]["temperature_2m"],
+            "wind_speed": data["current"]["wind_speed_10m"]
+        }
+
+    except requests.RequestException as e:
+
+        raise HTTPException(
+            status_code=502,
+            detail=f"Weather API error: {str(e)}"
         )
