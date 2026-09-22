@@ -177,21 +177,19 @@ Die zurückgegebene Zahl ist die Vorhersage des Machine-Learning-Modells und kei
 
 ## 3. GET /weather
 
-
 Der Endpoint ruft aktuelle Wetterdaten über die **Open-Meteo API** ab.
 
 ### Parameter
 
-| Name        | Typ    | Position | Standardwert |
-| ----------- | ------ | -------- | -----------: |
-| `latitude`  | number | query    |    `51.2277` |
-| `longitude` | number | query    |     `6.7735` |
+| Name | Typ | Position | Standardwert |
+|---|---|---|---:|
+| `latitude` | number | query | `51.2277` |
+| `longitude` | number | query | `6.7735` |
 
 ### Beispielaufruf
 
 ```text
 http://127.0.0.1:8002/weather
-```
 
 ### Tatsächliches Testergebnis
 
