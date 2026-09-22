@@ -196,7 +196,7 @@ http://127.0.0.1:8002/weather
 ```text
 latitude    : 51.2277
 longitude   : 6.7735
-temperature : 18.0
+temperature : 18.7
 wind_speed  : 6.8
 ```
 
