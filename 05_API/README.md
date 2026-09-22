@@ -15,15 +15,15 @@ Die API wurde mit **FastAPI** umgesetzt.
 
 ```text
 ASHRAE-Daten
-     ↓
+    ↓
 SQL / MySQL
-     ↓
+    ↓
 Python + Statistik
-     ↓
+    ↓
 Feature Engineering
-     ↓
+    ↓
 Machine Learning
-     ↓
+    ↓
 FastAPI
    ↙      ↘
 /predict  /weather
@@ -101,15 +101,11 @@ python -m uvicorn prediction_api:app --app-dir 05_API --port 8002
 
 Die API ist anschließend erreichbar unter:
 
-```text
 http://127.0.0.1:8002
-```
 
 Die interaktive Swagger-Dokumentation befindet sich unter:
 
-```text
 http://127.0.0.1:8002/docs
-```
 
 ---
 
@@ -125,13 +121,15 @@ http://127.0.0.1:8002/docs
 
 ## 1. GET /
 
-Test:
+Dieser Endpoint prüft, ob die API aktiv ist.
+
+### Test
 
 ```text
 http://127.0.0.1:8002/
 ```
 
-Beispielantwort:
+### Beispielantwort
 
 ```json
 {
@@ -174,30 +172,45 @@ Die zurückgegebene Zahl ist die Vorhersage des Machine-Learning-Modells und kei
 
 ---
 
-
 ## 3. GET /weather
 
 Der Endpoint ruft aktuelle Wetterdaten über die **Open-Meteo API** ab.
 
 ### Parameter
 
-| Name | Typ | Position | Standardwert |
-|---|---|---|---:|
-| `latitude` | number | query | `51.2277` |
-| `longitude` | number | query | `6.7735` |
+Die folgenden Parameter werden an den Endpoint übergeben:
+
+| Name        | Typ    | Position | Standardwert |
+| ----------- | ------ | -------- | -----------: |
+| `latitude`  | number | query    |    `51.2277` |
+| `longitude` | number | query    |     `6.7735` |
+
+### Antwort
+
+Der Endpoint gibt die aktuellen Wetterdaten zurück:
+
+| Name          | Typ    | Beschreibung                   |
+| ------------- | ------ | ------------------------------ |
+| `latitude`    | number | Verwendete geografische Breite |
+| `longitude`   | number | Verwendete geografische Länge  |
+| `temperature` | number | Aktuelle Temperatur            |
+| `wind_speed`  | number | Aktuelle Windgeschwindigkeit   |
 
 ### Beispielaufruf
 
 ```text
 http://127.0.0.1:8002/weather
+```
 
-### Tatsächliches Testergebnis
+### Tatsächliche Antwort zum Zeitpunkt des Tests
 
-```text
-latitude    : 51.2277
-longitude   : 6.7735
-temperature : 18.7
-wind_speed  : 6.8
+```json
+{
+  "latitude": 51.2277,
+  "longitude": 6.7735,
+  "temperature": 18.7,
+  "wind_speed": 6.8
+}
 ```
 
 ### PowerShell-Test
@@ -212,8 +225,23 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8002/weather" -Method Get
 http://127.0.0.1:8002/weather?latitude=51.2277&longitude=6.7735
 ```
 
-
 Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die verwendeten Koordinaten.
+
+---
+
+## Swagger-Dokumentation
+
+Die API kann über Swagger getestet werden:
+
+http://127.0.0.1:8002/docs
+
+Dort stehen die drei Endpoints zur Verfügung:
+
+```text
+GET  /
+POST /predict
+GET  /weather
+```
 
 ---
 
@@ -229,7 +257,7 @@ Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die v
 └── rf_pipeline.joblib
 ```
 
-`rf_pipeline.joblib` wird nicht in Git gespeichert.
+Die Datei `rf_pipeline.joblib` wird nicht in Git gespeichert.
 
 ---
 
@@ -237,19 +265,24 @@ Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die v
 
 Die API-Schicht des Projekts ist funktionsfähig.
 
-**Implementiert und getestet:**
+### Implementiert und getestet
 
 * Random-Forest-Pipeline geladen
-* `GET /`
-* `POST /predict`
-* `GET /weather`
+* `GET /` erfolgreich getestet
+* `POST /predict` erfolgreich getestet
+* `GET /weather` erfolgreich getestet
 * Swagger-Dokumentation über `/docs`
 
 Die API bildet damit die letzte technische Schicht des Projekts:
 
 ```text
 Datenanalyse
-→ Feature Engineering
-→ Machine Learning
-→ API
+    ↓
+Feature Engineering
+    ↓
+Machine Learning
+    ↓
+API
+    ↓
+Prediction + Weather
 ```
