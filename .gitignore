@@ -1,3 +1,16 @@
+# Große Datendateien
+01_SQL_MySQL/02_data_import.sql
+01_SQL_MySQL/04_train_full.sql
+
+# Datendateien
+*.csv
+*.csv.gz
+*.parquet
+*.zip
+
+# Große SQL-Dumps
+*.sql.gz
+
 # Python
 __pycache__/
 *.pyc
@@ -5,9 +18,13 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Environnements
+# Virtuelle Umgebung und Umgebungsvariablen
 .venv/
 .env
 
-# Machine Learning models
-*.joblib
+# Machine-Learning-Modelle
+05_API/*.joblib
+
+
+
+

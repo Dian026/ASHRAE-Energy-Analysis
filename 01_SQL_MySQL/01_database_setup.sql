@@ -58,3 +58,14 @@ CREATE TABLE IF NOT EXISTS train (
     timestamp DATETIME,
     meter_reading FLOAT
 );
+
+
+-- ===================================================================== 
+-- 2. KONTROLLE DER DATENBANKSTRUKTUR
+ -- =====================================================================
+SHOW TABLES; 
+
+DESCRIBE building_metadata; 
+DESCRIBE weather_train;
+DESCRIBE train;
+
