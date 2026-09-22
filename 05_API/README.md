@@ -174,21 +174,23 @@ Die zurückgegebene Zahl ist die Vorhersage des Machine-Learning-Modells und kei
 
 ---
 
+
 ## 3. GET /weather
+
 
 Der Endpoint ruft aktuelle Wetterdaten über die **Open-Meteo API** ab.
 
-Standardkoordinaten:
+### Parameter
+
+| Name        | Typ    | Position | Standardwert |
+| ----------- | ------ | -------- | -----------: |
+| `latitude`  | number | query    |    `51.2277` |
+| `longitude` | number | query    |     `6.7735` |
+
+### Beispielaufruf
 
 ```text
-latitude  = 51.2277
-longitude = 6.7735
-```
-
-### Test
-
-```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8002/weather" -Method Get
+http://127.0.0.1:8002/weather
 ```
 
 ### Tatsächliches Testergebnis
@@ -196,9 +198,22 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8002/weather" -Method Get
 ```text
 latitude    : 51.2277
 longitude   : 6.7735
-temperature : 16.0
+temperature : 18.0
 wind_speed  : 6.8
 ```
+
+### PowerShell-Test
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8002/weather" -Method Get
+```
+
+### Beispiel mit eigenen Koordinaten
+
+```text
+http://127.0.0.1:8002/weather?latitude=51.2277&longitude=6.7735
+```
+
 
 Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die verwendeten Koordinaten.
 
