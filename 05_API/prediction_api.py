@@ -67,6 +67,12 @@ class PredictionInput(BaseModel):
     month: int
     year: int
 
+class WeatherResponse(BaseModel):
+    latitude: float
+    longitude: float
+    temperature: float
+    wind_speed: float
+
 
 # -----------------------------------------------------------------
 # 4. Startseite
@@ -122,13 +128,15 @@ def predict_energy(data: PredictionInput):
         )
 
 
-
-
-    # -----------------------------------------------------------------
+# -----------------------------------------------------------------
 # 6. Weather Endpoint
 # -----------------------------------------------------------------
 
-@app.get("/weather")
+@app.get(
+    "/weather",
+    response_model=WeatherResponse,
+    summary="Aktuelle Wetterdaten abrufen"
+)
 def get_weather(
     latitude: float = 51.2277,
     longitude: float = 6.7735
