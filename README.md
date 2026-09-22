@@ -237,18 +237,24 @@ Das Projekt enthält eine **FastAPI-Anwendung** für Vorhersage und Wetterdaten.
 
 ```text
 ASHRAE-Daten
-     ↓
+      ↓
 SQL / MySQL
-     ↓
-Python + Statistik
-     ↓
+      ↓
+Python / EDA
+      ↓
+Statistik
+      ↓
 Feature Engineering
-     ↓
+      ↓
 Machine Learning
-     ↓
-FastAPI
-   ↙      ↘
-/predict  /weather
+ ┌────────┬─────────────┐
+ ↓        ↓             ↓
+Linear    Log      Random Forest
+                         ↓
+                      FastAPI
+                   ┌─────┴─────┐
+                   ↓           ↓
+               /predict    /weather
 ```
 
 ### FastAPI Endpoints
@@ -508,4 +514,5 @@ Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
 ## Autor
 
 **Mamadou Dian Diallo**
+
 GitHub: [Dian026](https://github.com/Dian026)
