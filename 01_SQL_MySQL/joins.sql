@@ -1,7 +1,7 @@
 -- =====================================================================
--- JOIN ANALYSIS – ASHRAE ENERGY ANALYSIS
+-- Tabellenverknüpfung & Datenintegration mit JOINs
 -- Zweck: Verknüpfung von Energie-, Gebäude- und Wetterdaten
--- =====================================================================
+-- =====================================================================-
 
 USE ashrae_energy;
 

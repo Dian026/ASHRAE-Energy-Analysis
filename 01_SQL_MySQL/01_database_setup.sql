@@ -1,3 +1,8 @@
+-- =====================================================================
+-- Datenbankaufbau & Tabellenstruktur
+-- =====================================================================
+
+
 -- Projektdatenbank erstellen
 CREATE DATABASE IF NOT EXISTS ashrae_energy;
 

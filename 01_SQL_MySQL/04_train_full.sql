@@ -1,11 +1,7 @@
--- #####################################################################
--- 7. INDIZES FÜR DIE DATENVERARBEITUNG
--- ZIEL: Überprüfung und Erstellung der benötigten Indizes
---
--- Hinweis: Die DROP-INDEX-Anweisungen verwenden "IF EXISTS", damit
--- dieses Skript sowohl auf einer frischen Datenbank als auch bei
--- wiederholter Ausführung fehlerfrei läuft (MySQL 8.0.29+ erforderlich).
--- #####################################################################
+-- =====================================================================
+-- Tabellenverknüpfung & Datenintegration mit JOINs
+-- =====================================================================
+
 
 -- 1. Vorhandene Indizes überprüfen
 

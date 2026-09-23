@@ -212,22 +212,33 @@ Bewertet wurden die Modelle mit:
 
 ---
 
+## Statistische Analyse Die statistische Analyse wurde auf Basis von 500.000 Strommessungen durchgeführt.
+
+ ### Verteilung des Energieverbrauchs 
+
+ - **Mittelwert:** 245,89 
+ - **Median:** 83,14 
+ - **Standardabweichung:** 392,85
+
+
 ## Wichtigste Ergebnisse
 
-| Analyse / Modell                       | Ergebnis                                                                          |
-| -------------------------------------- | --------------------------------------------------------------------------------- |
-| Temperatur ↔ Energieverbrauch          | Pearson r = 0.198, p < 0.001 → signifikanter positiver Zusammenhang               |
-| Unterschiede nach Gebäudenutzung       | ANOVA F = 2.707, p = 0.032 → signifikanter Unterschied zwischen den Nutzungsarten |
-| Ausreißer (IQR-Methode)                | 67.045 von 500.000 Werten (13,41 %) – überwiegend reale Spitzenverbräuche         |
-| Lineare Regression (Original)          | RMSE = 359.67, R² = 0.165                                                         |
-| Lineare Regression (log-transformiert) | RMSE = 426.45, R² = −0.174                                                        |
-| Random Forest                          | MAE = 21.51, RMSE = 75.06, R² = 0.9773                                            |
+| Analyse / Modell                       | Ergebnis                                                                                         |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Temperatur ↔ Energieverbrauch          | Pearson r = 0,227, p < 0,001 → signifikanter positiver Zusammenhang                              |
+| Unterschiede nach Gebäudenutzung       | ANOVA F = 3,500, p = 0,008407 → signifikanter Unterschied zwischen mindestens zwei Nutzungsarten |
+| Ausreißer (IQR-Methode)                | 36.833 von 500.000 Werten (7,37 %)                                                               |
+| Lineare Regression (Original)          | RMSE = 359,67, R² = 0,165                                                                        |
+| Lineare Regression (log-transformiert) | RMSE = 426,45, R² = −0,174                                                                       |
+| Random Forest                          | MAE = 21,51, RMSE = 75,06, R² = 0,9773                                                           |
 
 ### Kernaussage
 
-Der Energieverbrauch unterscheidet sich signifikant zwischen Gebäudenutzungen und weist einen positiven Zusammenhang mit der Außentemperatur auf.
+Der Energieverbrauch zeigt eine deutliche Streuung und weist einen statistisch signifikanten positiven Zusammenhang mit der Außentemperatur auf.
 
-Die linearen Modelle mit `air_temperature` und `square_feet` zeigen eine begrenzte Vorhersagequalität. Der Random Forest verwendet zusätzliche Gebäude-, Wetter- und Zeitmerkmale und erreicht auf seinem Testdatensatz deutlich bessere Kennzahlen.
+Die Ergebnisse der ANOVA zeigen einen statistisch signifikanten Unterschied zwischen mindestens zwei Gebäudenutzungen.
+
+Die linearen Modelle mit `air_temperature` und `square_feet` zeigen eine begrenzte Vorhersagequalität. Der Random Forest verwendet zusätzliche Gebäude-, Wetter- und Zeitmerkmale.
 
 **Hinweis:** Die linearen Modelle und der Random Forest wurden in der aktuellen Projektversion auf unterschiedlich großen Testdatensätzen bewertet. Für einen direkten und fairen Modellvergleich sollten alle Modelle auf demselben Train-Test-Split evaluiert werden.
 
