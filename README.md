@@ -183,7 +183,21 @@ Zeitbezogene Merkmale wurden aus `timestamp` abgeleitet:
 * `month`
 * `year`
 
+Zusätzliche Gebäude-, Wetter- und Zeitmerkmale wurden für die Modellierung aufbereitet.
+
+Dazu gehören unter anderem:
+
+ Gebäudefläche und Baujahr 
+
+ Luft- und Taupunkttemperatur 
+
+ Wind- und Luftdruckdaten 
+
+ Stunde, Wochentag und Monat 
+
 Fehlende numerische Werte wurden für das Random-Forest-Modell über eine Median-Imputation behandelt.
+
+Für die Modellbereitstellung wurde das trainierte Random-Forest-Modell als Modellartefakt gespeichert.
 
 ---
 
