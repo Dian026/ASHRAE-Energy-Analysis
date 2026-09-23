@@ -55,6 +55,12 @@ Der konsolidierte Datensatz `train_full` verbindet Energieverbrauch, Gebäudeinf
 
 ## Datenverarbeitung – Workflow
 
+Die großen originalen ASHRAE-Datendateien werden aufgrund ihrer Dateigröße
+nicht im GitHub-Repository gespeichert.
+
+Die SQL-Skripte für Import, Datenaufbereitung und Analyse sind jedoch
+vollständig im Repository dokumentiert.
+
 ```text
 Daten
   ↓
@@ -98,10 +104,14 @@ Die zentralen SQL-Skripte befinden sich unter:
 
 ```text
 01_SQL_MySQL/
+
 ├── 01_database_setup.sql
-├── 02_data_quality.sql
-├── 03_table_joins.sql
-└── 04_energy_analysis.sql
+├── 02_data_import.sql
+├── 03_data_quality.sql
+├── 04_train_full.sql
+├── 05_analysis.sql
+├── joins.sql
+└── README.md
 ```
 
 ---
@@ -323,14 +333,15 @@ http://127.0.0.1:8002/docs
 
 ```text
 05_API/
+
 ├── prediction_api.py
 ├── weather_api.py
 ├── requirements.txt
-├── README.md
-└── rf_pipeline.joblib
+└── README.md
 ```
 
-`rf_pipeline.joblib` wird lokal verwendet und über `.gitignore` von Git ausgeschlossen.
+Die trainierten Machine-Learning-Modelle (`*.joblib`) werden lokal verwendet
+und aufgrund ihrer Dateigröße über `.gitignore` von Git ausgeschlossen.
 
 Weitere Informationen zur API befinden sich in:
 
@@ -381,9 +392,12 @@ ASHRAE-Energy-Analysis/
 │
 ├── 01_SQL_MySQL/
 │   ├── 01_database_setup.sql
-│   ├── 02_data_quality.sql
-│   ├── 03_table_joins.sql
-│   └── 04_energy_analysis.sql
+│   ├── 02_data_import.sql
+│   ├── 03_data_quality.sql
+│   ├── 04_train_full.sql
+│   ├── 05_analysis.sql
+│   ├── joins.sql
+│   └── README.md
 │
 ├── 02_Python/
 │   ├── data_exploration.ipynb
@@ -434,6 +448,9 @@ pip install -r requirements.txt
 Die Notebooks unter `02_Python/`, `03_Statistics/` und `04_Machine_Learning/` können anschließend in Jupyter geöffnet und ausgeführt werden.
 
 Für den SQL-Teil wird eine lokale MySQL-Instanz benötigt.
+
+Die originalen ASHRAE-Datendateien werden separat lokal bereitgestellt
+und sind nicht Bestandteil des GitHub-Repositories.
 
 Für die API:
 
