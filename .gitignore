@@ -1,7 +1,3 @@
-# Große Datendateien
-01_SQL_MySQL/02_data_import.sql
-01_SQL_MySQL/04_train_full.sql
-
 # Datendateien
 *.csv
 *.csv.gz

@@ -126,10 +126,10 @@ ORDER BY primary_use;
 
 
 - ╔══════════════════════════════════════════════════════════════════════════╗
---║ PROJEKT: ASHRAE Energy Prediction                                                              ║
---║ ABSCHNITT: 16 - Explorative Analyse                                                            ║
---║ ZIEL: Untersuchung des Energieverbrauchs nach Zeit, Temperatur,                                ║
---║       Gebäudenutzung, Zählertyp und Gebäude                                                    ║
+--║ PROJEKT: ASHRAE Energy Prediction                                        ║
+--║ ABSCHNITT: 16 - Explorative Analyse                                      ║
+--║ ZIEL: Untersuchung des Energieverbrauchs nach Zeit, Temperatur,          ║
+--║       Gebäudenutzung, Zählertyp und Gebäude                              ║
 --╚══════════════════════════════════════════════════════════════════════════╝
 
 
