@@ -1,3 +1,6 @@
+# Zugangsdaten
+.env
+
 # Datendateien
 *.csv
 *.csv.gz
