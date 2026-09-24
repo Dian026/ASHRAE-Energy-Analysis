@@ -281,3 +281,49 @@ SELECT
 FROM train_full
 GROUP BY primary_use
 ORDER BY durchschnittlicher_verbrauch DESC;
+
+
+-- =====================================================================
+-- 11.3 Analyse des Energieverbrauchs nach Gebäudenutzung
+--      mit Vergleich der Gesamtwerte und der Werte ohne Verbrauch = 0
+-- =====================================================================
+
+SELECT
+    primary_use,
+
+    COUNT(*) AS anzahl_messungen,
+
+    COUNT(NULLIF(meter_reading, 0))
+        AS anzahl_messungen_non_zero,
+
+    SUM(meter_reading = 0)
+        AS anzahl_messungen_zero,
+
+    ROUND(
+        100 * SUM(meter_reading = 0) / COUNT(*),
+        2
+    ) AS anteil_zero_prozent,
+
+    ROUND(
+        SUM(meter_reading),
+        2
+    ) AS gesamtverbrauch,
+
+    ROUND(
+        AVG(meter_reading),
+        2
+    ) AS durchschnitt_alle_werte,
+
+    ROUND(
+        AVG(NULLIF(meter_reading, 0)),
+        2
+    ) AS durchschnitt_nur_positive_werte
+
+FROM train_full
+
+GROUP BY primary_use
+
+ORDER BY durchschnitt_nur_positive_werte DESC;
+
+
+

@@ -1,110 +1,83 @@
-# ASHRAE Energy Analysis
+# 🏢 ASHRAE Energy Analysis
 
-Analyse des Energieverbrauchs von Gebäuden auf Basis des **ASHRAE Energy Prediction Datensatzes** – von der relationalen Datenbank über explorative und statistische Analyse bis hin zu Machine Learning und einer funktionierenden API.
+**End-to-End Data-Analytics-Projekt** zur Analyse des Energieverbrauchs von Gebäuden – von der relationalen Datenbank über explorative & statistische Analyse bis hin zu Machine Learning und einer produktiven API.
 
-**Vollständiger Data-Analytics-Workflow:**
+![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Database-orange?logo=mysql&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-API-teal?logo=fastapi&logoColor=white)
+![scikit--learn](https://img.shields.io/badge/scikit--learn-ML-yellowgreen?logo=scikitlearn)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-```text
+```
 SQL / MySQL → Python → Statistik → Feature Engineering → Machine Learning → API
 ```
 
 ---
 
-## Forschungsfrage
+## 🎯 Forschungsfrage
 
-**Wie unterscheidet sich der Energieverbrauch nach Gebäudetyp, Zählertyp und Standort, und welche Zusammenhänge bestehen mit Gebäude- und Wetterinformationen?**
-
----
-
-## Projektziele
-
-* Aufbau und Verwaltung einer relationalen Datenbank
-* Integration von Energie-, Gebäude- und Wetterdaten
-* Prüfung der Datenqualität
-* Explorative Datenanalyse (EDA)
-* Statistische Untersuchung des Energieverbrauchs
-* Visualisierung wichtiger Ergebnisse
-* Feature Engineering
-* Entwicklung und Bewertung von Machine-Learning-Modellen
-* Bereitstellung einer API für Vorhersage und Wetterdaten
-* Dokumentation der Ergebnisse
-* Präsentation des Gesamtprojekts
+> Wie unterscheidet sich der Energieverbrauch nach Gebäudetyp, Zählertyp und Standort, und welche Zusammenhänge bestehen mit Gebäude- und Wetterinformationen?
 
 ---
 
-## Daten
+## ✨ Projekt-Highlights
 
-Das Projekt verwendet den **ASHRAE Energy Prediction Datensatz** mit Energie-, Gebäude- und Wetterinformationen.
+| Kennzahl | Ergebnis |
+|---|---|
+| 📊 Datenbasis | > 20 Mio. Zeilen (`train_full`), Analyse auf **500.000 Strommessungen** |
+| 🌡️ Temperatur ↔ Verbrauch | Pearson r = **0,227**, p < 0,001 (signifikant positiv) |
+| 🏗️ Unterschiede nach Nutzung | ANOVA F = 3,500, p = 0,0084 (signifikant) |
+| 🤖 Bestes Modell | **Random Forest** – R² = **0,977**, MAE = 21,51, RMSE = 75,06 |
+| 🚀 Deployment | Live vorhersagefähige **FastAPI**-Anwendung mit Swagger-UI |
 
-Zentrale Tabellen:
+Das Random-Forest-Modell erklärt **97,7 %** der Varianz im Energieverbrauch und übertrifft die linearen Baseline-Modelle deutlich.
 
-* `train`
-* `building_metadata`
-* `weather_train`
-* `train_full`
+---
 
-Wichtige Verknüpfungsschlüssel:
+## 🧩 Projektziele
 
-* `building_id`
-* `site_id`
-* `timestamp`
+- Aufbau und Verwaltung einer relationalen Datenbank (MySQL)
+- Integration von Energie-, Gebäude- und Wetterdaten
+- Prüfung der Datenqualität
+- Explorative Datenanalyse (EDA)
+- Statistische Untersuchung des Energieverbrauchs (Korrelation, ANOVA, Ausreißeranalyse)
+- Visualisierung zentraler Ergebnisse
+- Feature Engineering für das Machine Learning
+- Entwicklung und Bewertung mehrerer ML-Modelle
+- Bereitstellung einer API für Vorhersage und Live-Wetterdaten
+- Dokumentation und Präsentation des Gesamtprojekts
+
+---
+
+## 🗂️ Daten
+
+Verwendet wird der **ASHRAE Energy Prediction Datensatz** mit Energie-, Gebäude- und Wetterinformationen.
+
+**Zentrale Tabellen:** `train`, `building_metadata`, `weather_train`, `train_full`
+**Verknüpfungsschlüssel:** `building_id`, `site_id`, `timestamp`
 
 Der konsolidierte Datensatz `train_full` verbindet Energieverbrauch, Gebäudeinformationen und Wetterdaten.
 
+> ℹ️ Die originalen ASHRAE-Rohdaten werden aufgrund ihrer Dateigröße nicht im Repository gespeichert. Alle SQL-Skripte für Import, Aufbereitung und Analyse sind jedoch vollständig dokumentiert.
+
 ---
 
-## Datenverarbeitung – Workflow
+## 🔄 Workflow
 
-Die großen originalen ASHRAE-Datendateien werden aufgrund ihrer Dateigröße
-nicht im GitHub-Repository gespeichert.
-
-Die SQL-Skripte für Import, Datenaufbereitung und Analyse sind jedoch
-vollständig im Repository dokumentiert.
-
-```text
-Daten
-  ↓
-Datenqualität
-  ↓
-Explorative Datenanalyse (EDA)
-  ↓
-Statistische Analyse
-  ↓
-Visualisierung
-  ↓
-Feature Engineering
-  ↓
-Machine Learning
-  ↓
-Modellbewertung
-  ↓
-Interpretation
-  ↓
-API
-  ↓
-Dokumentation / Präsentation
+```
+Daten → Datenqualität → EDA → Statistische Analyse → Visualisierung
+      → Feature Engineering → Machine Learning → Modellbewertung
+      → Interpretation → API → Dokumentation / Präsentation
 ```
 
 ---
 
-## SQL / MySQL
+## 🗄️ SQL / MySQL
 
-Der SQL-Teil bildet die Grundlage der Datenverarbeitung.
+Grundlage der Datenverarbeitung: Datenbank- und Tabellenaufbau, Import der Rohdaten, Qualitäts- und Schlüsselprüfung, Verknüpfung der Tabellen sowie erste Analysen.
 
-### Durchgeführte Schritte
-
-* Erstellung der Datenbank und Tabellen
-* Import der Rohdaten
-* Prüfung der Datenqualität
-* Prüfung von Schlüsselspalten
-* Verknüpfung der Tabellen
-* Analyse der Energiedaten
-
-Die zentralen SQL-Skripte befinden sich unter:
-
-```text
+```
 01_SQL_MySQL/
-
 ├── 01_database_setup.sql
 ├── 02_data_import.sql
 ├── 03_data_quality.sql
@@ -114,21 +87,34 @@ Die zentralen SQL-Skripte befinden sich unter:
 └── README.md
 ```
 
+### Optimisation des requêtes
+
+Des Index wurden auf den zentralen Verknüpfungsschlüsseln angelegt, u. a. `building_id`, `timestamp` und `(site_id, timestamp)`, um die Performance der SQL-Abfragen zu verbessern.
+
+<details>
+<summary>📋 Übersicht der Indizes anzeigen</summary>
+
+```
++-------------------+-----------------------+-------------+
+| TABLE_NAME        | INDEX_NAME             | COLUMN_NAME |
++-------------------+-----------------------+-------------+
+| building_metadata | idx_building_id        | building_id |
+| train             | idx_train_building     | building_id |
+| train             | idx_train_timestamp    | timestamp   |
+| weather_train     | idx_weather_site_time  | site_id     |
+| weather_train     | idx_weather_site_time  | timestamp   |
++-------------------+-----------------------+-------------+
+```
+
+</details>
+
 ---
 
-## Python
+## 🐍 Python
 
-Der Python-Teil umfasst:
+Datenexploration, Datenaufbereitung, statistische Auswertung, Visualisierung und Vorbereitung der ML-Daten.
 
-* Datenexploration
-* Datenaufbereitung
-* statistische Auswertung
-* Visualisierung
-* Vorbereitung der Machine-Learning-Daten
-
-Notebooks:
-
-```text
+```
 02_Python/
 ├── data_exploration.ipynb
 ├── statistics.ipynb
@@ -137,172 +123,105 @@ Notebooks:
 
 ---
 
-## Statistik
+## 📈 Statistik
 
-Durchgeführt wurden:
+Durchgeführte Analysen: deskriptive Statistik, Verteilungsanalyse, Vergleich von Gebäude- und Zählertypen, Korrelationsanalyse, ANOVA sowie Ausreißeranalyse mittels IQR-Methode.
 
-* Deskriptive Statistik
-* Verteilungsanalyse
-* Vergleich von Gebäude- und Zählertypen
-* Korrelationsanalyse
-* ANOVA
-* Ausreißeranalyse mit der IQR-Methode
-
-Die statistische Analyse befindet sich unter:
-
-```text
+```
 03_Statistics/
 └── statistical_analysis.ipynb
 ```
 
+### Verteilung des Energieverbrauchs (n = 500.000)
+
+| Kennzahl | Wert |
+|---|---|
+| Mittelwert | 245,89 |
+| Median | 83,14 |
+| Standardabweichung | 392,85 |
+| Ausreißer (IQR-Methode) | 36.833 von 500.000 (7,37 %) |
+
 ---
 
-## Feature Engineering
+## 🛠️ Feature Engineering
 
-Für das Machine Learning wurden zusätzliche zeitliche und analytische Merkmale erzeugt.
+Für das Machine Learning wurden zusätzliche zeitliche und analytische Merkmale erzeugt:
 
-Verwendete Merkmale für das aktuelle Random-Forest-Modell:
-
-```text
-square_feet
-year_built
-air_temperature
-dew_temperature
-wind_speed
-sea_level_pressure
-hour
-day_of_week
-month
-year
+```
+square_feet, year_built, air_temperature, dew_temperature,
+wind_speed, sea_level_pressure, hour, day_of_week, month, year
 ```
 
-Zeitbezogene Merkmale wurden aus `timestamp` abgeleitet:
-
-* `hour`
-* `day_of_week`
-* `month`
-* `year`
-
-Zusätzliche Gebäude-, Wetter- und Zeitmerkmale wurden für die Modellierung aufbereitet.
-
-Dazu gehören unter anderem:
-
- Gebäudefläche und Baujahr 
-
- Luft- und Taupunkttemperatur 
-
- Wind- und Luftdruckdaten 
-
- Stunde, Wochentag und Monat 
-
-Fehlende numerische Werte wurden für das Random-Forest-Modell über eine Median-Imputation behandelt.
-
-Für die Modellbereitstellung wurde das trainierte Random-Forest-Modell als Modellartefakt gespeichert.
+Die zeitbezogenen Merkmale (`hour`, `day_of_week`, `month`, `year`) wurden aus `timestamp` abgeleitet. Fehlende numerische Werte wurden per **Median-Imputation** behandelt. Das trainierte Random-Forest-Modell wurde für die spätere Bereitstellung als Modellartefakt (Joblib) gespeichert.
 
 ---
 
-## Machine Learning
+## 🤖 Machine Learning
 
-Für die Modellierung wurden mehrere Ansätze untersucht:
+Untersuchte Modelle:
 
 1. Lineare Regression
 2. Log-transformierte lineare Regression
-3. Random Forest Regression
+3. **Random Forest Regression**
 
-### Modellierung
+Bewertung anhand von **MAE**, **RMSE** und **R²**.
 
-Das Machine-Learning-Modell befindet sich unter:
-
-```text
+```
 04_Machine_Learning/
 └── ml_model.ipynb
 ```
 
-Bewertet wurden die Modelle mit:
+### Ergebnisübersicht
 
-* MAE
-* RMSE
-* R²
+| Modell | RMSE | R² | MAE |
+|---|---|---|---|
+| Lineare Regression | 359,67 | 0,165 | – |
+| Lineare Regression (log) | 426,45 | −0,174 | – |
+| **Random Forest** | **75,06** | **0,9773** | **21,51** |
 
----
-
-## Statistische Analyse Die statistische Analyse wurde auf Basis von 500.000 Strommessungen durchgeführt.
-
- ### Verteilung des Energieverbrauchs 
-
- - **Mittelwert:** 245,89 
- - **Median:** 83,14 
- - **Standardabweichung:** 392,85
-
-
-## Wichtigste Ergebnisse
-
-| Analyse / Modell                       | Ergebnis                                                                                         |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Temperatur ↔ Energieverbrauch          | Pearson r = 0,227, p < 0,001 → signifikanter positiver Zusammenhang                              |
-| Unterschiede nach Gebäudenutzung       | ANOVA F = 3,500, p = 0,008407 → signifikanter Unterschied zwischen mindestens zwei Nutzungsarten |
-| Ausreißer (IQR-Methode)                | 36.833 von 500.000 Werten (7,37 %)                                                               |
-| Lineare Regression (Original)          | RMSE = 359,67, R² = 0,165                                                                        |
-| Lineare Regression (log-transformiert) | RMSE = 426,45, R² = −0,174                                                                       |
-| Random Forest                          | MAE = 21,51, RMSE = 75,06, R² = 0,9773                                                           |
-
-### Kernaussage
-
-Der Energieverbrauch zeigt eine deutliche Streuung und weist einen statistisch signifikanten positiven Zusammenhang mit der Außentemperatur auf.
-
-Die Ergebnisse der ANOVA zeigen einen statistisch signifikanten Unterschied zwischen mindestens zwei Gebäudenutzungen.
-
-Die linearen Modelle mit `air_temperature` und `square_feet` zeigen eine begrenzte Vorhersagequalität. Der Random Forest verwendet zusätzliche Gebäude-, Wetter- und Zeitmerkmale.
-
-**Hinweis:** Die linearen Modelle und der Random Forest wurden in der aktuellen Projektversion auf unterschiedlich großen Testdatensätzen bewertet. Für einen direkten und fairen Modellvergleich sollten alle Modelle auf demselben Train-Test-Split evaluiert werden.
-
-Visualisierungen befinden sich in:
-
-```text
-results/figures/
-```
+> ⚠️ **Hinweis zur Fairness:** Die linearen Modelle und der Random Forest wurden in der aktuellen Version auf unterschiedlich großen Testdatensätzen bewertet. Für einen direkten Vergleich sollten künftig alle Modelle auf demselben Train-Test-Split evaluiert werden.
 
 ---
 
-## API
+## 🔍 Wichtigste Ergebnisse & Interpretation
 
-Das Projekt enthält eine **FastAPI-Anwendung** für Vorhersage und Wetterdaten.
+- Der Energieverbrauch zeigt eine deutliche Streuung und einen statistisch signifikanten **positiven Zusammenhang mit der Außentemperatur**.
+- Die ANOVA bestätigt **signifikante Unterschiede** im Verbrauch zwischen mindestens zwei Gebäudenutzungen.
+- Die linearen Modelle mit `air_temperature` und `square_feet` liefern nur eine **begrenzte Vorhersagequalität**.
+- Der **Random Forest** nutzt zusätzliche Gebäude-, Wetter- und Zeitmerkmale und erzielt eine deutlich höhere Vorhersagegenauigkeit.
+- Die Analyse berücksichtigt sowohl Gesamtverbrauch als auch Durchschnittswerte mit und ohne Nullverbrauch, um den Einfluss von Messungen mit Verbrauch = 0 transparent darzustellen.
+
+> **Performance-Hinweis:** `train_full` enthält über 20 Millionen Zeilen. Aggregationen wurden bewusst auf dem vollständigen Datensatz durchgeführt, ohne Daten zu löschen oder zu verändern – Datenintegrität wurde gegenüber reiner Abfrage-Optimierung priorisiert.
+
+Visualisierungen: [`results/figures/`](results/figures/)
+
+---
+
+## 🌐 API
+
+Das Projekt enthält eine **FastAPI**-Anwendung für Vorhersage und Live-Wetterdaten.
 
 ### Architektur
 
-```text
-ASHRAE-Daten
-      ↓
-SQL / MySQL
-      ↓
-Python / EDA
-      ↓
-Statistik
-      ↓
-Feature Engineering
-      ↓
-Machine Learning
- ┌────────┬─────────────┐
- ↓        ↓             ↓
-Linear    Log      Random Forest
-                         ↓
-                      FastAPI
-                   ┌─────┴─────┐
-                   ↓           ↓
-               /predict    /weather
+```
+ASHRAE-Daten → SQL/MySQL → Python/EDA → Statistik → Feature Engineering
+                                                          ↓
+                              Linear · Log · Random Forest
+                                                          ↓
+                                                      FastAPI
+                                                    ┌────┴────┐
+                                               /predict    /weather
 ```
 
-### FastAPI Endpoints
+### Endpoints
 
-| Methode | Endpoint   | Beschreibung                     |
-| ------- | ---------- | -------------------------------- |
-| GET     | `/`        | Prüft, ob die API aktiv ist      |
-| POST    | `/predict` | Vorhersage des Energieverbrauchs |
-| GET     | `/weather` | Abruf aktueller Wetterdaten      |
+| Methode | Endpoint | Beschreibung |
+|---|---|---|
+| `GET` | `/` | Prüft, ob die API aktiv ist |
+| `POST` | `/predict` | Vorhersage des Energieverbrauchs |
+| `GET` | `/weather` | Abruf aktueller Wetterdaten |
 
-### Beispiel für `/predict`
-
-Request:
+**Beispiel-Request `/predict`:**
 
 ```json
 {
@@ -319,7 +238,7 @@ Request:
 }
 ```
 
-Beispielantwort:
+**Beispiel-Response:**
 
 ```json
 {
@@ -327,15 +246,7 @@ Beispielantwort:
 }
 ```
 
-### Beispiel für `/weather`
-
-Request:
-
-```text
-http://127.0.0.1:8002/weather
-```
-
-Beispielantwort:
+**Beispiel `/weather`:**
 
 ```json
 {
@@ -346,73 +257,50 @@ Beispielantwort:
 }
 ```
 
-### Swagger-Dokumentation
+📖 Interaktive Swagger-Dokumentation: `http://127.0.0.1:8002/docs`
 
-Die API kann interaktiv über Swagger getestet werden:
-
-```text
-http://127.0.0.1:8002/docs
 ```
-
-### API-Projektstruktur
-
-```text
 05_API/
-
 ├── prediction_api.py
 ├── weather_api.py
 ├── requirements.txt
 └── README.md
 ```
 
-Die trainierten Machine-Learning-Modelle (`*.joblib`) werden lokal verwendet
-und aufgrund ihrer Dateigröße über `.gitignore` von Git ausgeschlossen.
+> Die trainierten Modelle (`*.joblib`) werden lokal genutzt und sind aufgrund ihrer Größe via `.gitignore` von Git ausgeschlossen.
 
-Weitere Informationen zur API befinden sich in:
+---
 
-```text
-05_API/README.md
+## ✅ Datenqualität
+
+Die zentralen Energieverbrauchsdaten sind **vollständig**; fehlende Werte betreffen vor allem ergänzende Gebäude- und Wetterinformationen.
+
+Geprüft wurden: fehlende Werte, Duplikate, Datensatzgrößen, Schlüssel, Verknüpfungen sowie die Vollständigkeit zentraler Messdaten.
+
+---
+
+## 🧰 Technologien
+
+| Bereich | Technologie |
+|---|---|
+| Datenbank | MySQL |
+| Abfragesprache | SQL |
+| Programmierung | Python |
+| Datenanalyse | Pandas |
+| Visualisierung | Matplotlib |
+| Statistik | Deskriptive Statistik, ANOVA, Korrelation |
+| Machine Learning | Scikit-learn |
+| API | FastAPI, Uvicorn |
+| Wetterdaten | Open-Meteo API |
+| Modellspeicherung | Joblib |
+| Dokumentation | GitHub |
+| Präsentation | PowerPoint |
+
+---
+
+## 📁 Projektstruktur
+
 ```
-
----
-
-## Datenqualität
-
-Die zentralen Energieverbrauchsdaten sind vollständig. Fehlende Werte treten hauptsächlich bei ergänzenden Gebäude- und Wetterinformationen auf.
-
-Geprüft wurden:
-
-* fehlende Werte
-* Duplikate
-* Datensatzgrößen
-* Schlüssel
-* Verknüpfungen
-* Vollständigkeit zentraler Messdaten
-
----
-
-## Technologien
-
-| Bereich           | Technologie                               |
-| ----------------- | ----------------------------------------- |
-| Datenbank         | MySQL                                     |
-| Abfragesprache    | SQL                                       |
-| Programmierung    | Python                                    |
-| Datenanalyse      | Pandas                                    |
-| Visualisierung    | Matplotlib                                |
-| Statistik         | Deskriptive Statistik, ANOVA, Korrelation |
-| Machine Learning  | Scikit-learn                              |
-| API               | FastAPI, Uvicorn                          |
-| Wetterdaten       | Open-Meteo API                            |
-| Modellspeicherung | Joblib                                    |
-| Dokumentation     | GitHub                                    |
-| Präsentation      | PowerPoint                                |
-
----
-
-## Projektstruktur
-
-```text
 ASHRAE-Energy-Analysis/
 │
 ├── 01_SQL_MySQL/
@@ -455,106 +343,64 @@ ASHRAE-Energy-Analysis/
 
 ---
 
-## Installation
-
-Repository klonen:
+## ⚙️ Installation
 
 ```bash
+# Repository klonen
 git clone https://github.com/Dian026/ASHRAE-Energy-Analysis.git
 cd ASHRAE-Energy-Analysis
-```
 
-Python-Abhängigkeiten installieren:
-
-```bash
+# Python-Abhängigkeiten installieren
 pip install -r requirements.txt
 ```
 
 Die Notebooks unter `02_Python/`, `03_Statistics/` und `04_Machine_Learning/` können anschließend in Jupyter geöffnet und ausgeführt werden.
 
-Für den SQL-Teil wird eine lokale MySQL-Instanz benötigt.
+Für den SQL-Teil wird eine lokale MySQL-Instanz benötigt. Die originalen ASHRAE-Datendateien werden separat lokal bereitgestellt und sind nicht Bestandteil des Repositories.
 
-Die originalen ASHRAE-Datendateien werden separat lokal bereitgestellt
-und sind nicht Bestandteil des GitHub-Repositories.
-
-Für die API:
+**API starten:**
 
 ```bash
 pip install -r 05_API/requirements.txt
-```
-
-Die API kann anschließend mit:
-
-```bash
 python -m uvicorn prediction_api:app --app-dir 05_API --port 8002
 ```
 
-gestartet werden.
+---
+
+## 🎤 Präsentation
+
+Die vollständige Projektpräsentation befindet sich unter [`presentation/ASHRAE_Presentation.pptx`](presentation/ASHRAE_Presentation.pptx).
 
 ---
 
-## Präsentation
+## 🔗 GitHub
 
-Die vollständige Projektpräsentation befindet sich unter:
+**Repository:** [github.com/Dian026/ASHRAE-Energy-Analysis](https://github.com/Dian026/ASHRAE-Energy-Analysis)
 
-```text
-presentation/ASHRAE_Presentation.pptx
-```
+Enthält den vollständigen Workflow von SQL und Python über Statistik und Machine Learning bis hin zur FastAPI-Anwendung.
 
----
-
-## GitHub
-
-Das vollständige Projekt ist auf GitHub verfügbar:
-
-**Repository:**
-
-https://github.com/Dian026/ASHRAE-Energy-Analysis
-
-Der Repository enthält den vollständigen Workflow von SQL und Python über Statistik und Machine Learning bis hin zur FastAPI-Anwendung.
+Ein QR-Code, der direkt auf das Repository verweist, kann mit `create_qr.py` erzeugt werden.
 
 ---
 
-## QR-Code
+## 🏁 Fazit
 
-Der QR-Code verweist direkt auf das GitHub-Repository.
+Dieses Projekt demonstriert einen **vollständigen Data-Analytics-Workflow** – von der Datenbank über SQL, Python und Statistik bis hin zu Machine Learning und API-Entwicklung. Im Mittelpunkt stehen:
 
-```text
-ASHRAE Energy Analysis
-
-GitHub
-[ QR CODE ]
-
-SQL • Python • Statistik • Machine Learning • FastAPI
-```
-
-Der QR-Code kann mit `create_qr.py` erzeugt werden.
+- strukturierte Datenverarbeitung
+- nachvollziehbare statistische Analysen
+- durchdachtes Feature Engineering
+- Modellierung und Bewertung
+- produktionsnahe API-Bereitstellung
+- professionelle Dokumentation und Präsentation
 
 ---
 
-## Projektziel
-
-Das Projekt zeigt einen vollständigen **Data-Analytics-Workflow** von der Datenbank über SQL, Python und Statistik bis hin zu Machine Learning und API-Entwicklung.
-
-Im Mittelpunkt stehen:
-
-* strukturierte Datenverarbeitung
-* nachvollziehbare statistische Analysen
-* Feature Engineering
-* Modellierung und Bewertung
-* API-Bereitstellung
-* professionelle Dokumentation und Präsentation
-
----
-
-## Lizenz
+## 📄 Lizenz
 
 Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
 
----
-
-## Autor
+## 👤 Autor
 
 **Mamadou Dian Diallo**
-
-GitHub: [Dian026](https://github.com/Dian026)
+GitHub: [@Dian026](https://github.com/Dian026)
