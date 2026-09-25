@@ -125,3 +125,32 @@ FROM train
 WHERE meter_reading = 0;
 
 
+
+-- =====================================================================
+-- Datenqualitätsprüfung der Verbrauchswerte
+-- =====================================================================
+SELECT
+    COUNT(*) AS gesamt,
+    SUM(meter_reading IS NULL) AS fehlende_werte,
+    SUM(meter_reading = 0) AS werte_null,
+    SUM(meter_reading < 0) AS negative_werte,
+    MIN(meter_reading) AS minimum,
+    MAX(meter_reading) AS maximum
+FROM train_full;
+
+
+-- Datenqualitätsprüfung der Verbrauchswerte mit Prozentanteilen
+
+SELECT
+    COUNT(*) AS gesamt,
+    SUM(meter_reading = 0) AS verbrauch_null,
+    SUM(meter_reading > 0) AS verbrauch_positiv,
+    ROUND(
+        100 * SUM(meter_reading = 0) / COUNT(*),
+        2
+    ) AS anteil_null_prozent,
+    ROUND(
+        100 * SUM(meter_reading > 0) / COUNT(*),
+        2
+    ) AS anteil_positiv_prozent
+FROM train_full;
