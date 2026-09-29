@@ -11,6 +11,7 @@ import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
+
 # -----------------------------------------------------------------
 # 1. API erstellen
 # -----------------------------------------------------------------
@@ -23,7 +24,7 @@ app = FastAPI(
 
 
 # -----------------------------------------------------------------
-# 2. Aktuelle Random-Forest-Pipeline laden
+# 2. Random-Forest-Pipeline laden
 # -----------------------------------------------------------------
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -36,10 +37,7 @@ print("Random-Forest-Pipeline erfolgreich geladen.")
 
 # Kontrolle
 if hasattr(rf_pipeline, "n_features_in_"):
-    print(
-        "Anzahl Features:",
-        rf_pipeline.n_features_in_
-    )
+    print("Anzahl Features:", rf_pipeline.n_features_in_)
 
 if hasattr(rf_pipeline, "feature_names_in_"):
     print(
@@ -50,24 +48,25 @@ if hasattr(rf_pipeline, "feature_names_in_"):
 
 # -----------------------------------------------------------------
 # 3. Eingabedaten
-#    Genau dieselben 10 Features wie beim aktuellen Modell
+#    Genau dieselben 10 Features wie beim finalen Modell
 # -----------------------------------------------------------------
 
 class PredictionInput(BaseModel):
 
-    square_feet: float
-    year_built: float
     air_temperature: float
     dew_temperature: float
     wind_speed: float
     sea_level_pressure: float
+    square_feet: float
+    building_age: float
 
     hour: int
     day_of_week: int
     month: int
-    year: int
+    is_weekend: int
 
 class WeatherResponse(BaseModel):
+
     latitude: float
     longitude: float
     temperature: float
@@ -82,9 +81,11 @@ class WeatherResponse(BaseModel):
 def root():
 
     return {
-        "message": "ASHRAE Energy Prediction API is running"
+        "message": "ASHRAE Energy Prediction API is running",
+        "model": "Random Forest",
+        "version": "1.0.0",
+        "features": 10
     }
-
 
 # -----------------------------------------------------------------
 # 5. Prediction Endpoint
@@ -95,22 +96,23 @@ def predict_energy(data: PredictionInput):
 
     try:
 
-        # Daten exakt in der Reihenfolge des Modells
-        input_data = pd.DataFrame([{
-            "square_feet": data.square_feet,
-            "year_built": data.year_built,
-            "air_temperature": data.air_temperature,
-            "dew_temperature": data.dew_temperature,
-            "wind_speed": data.wind_speed,
-            "sea_level_pressure": data.sea_level_pressure,
-            "hour": data.hour,
-            "day_of_week": data.day_of_week,
-            "month": data.month,
-            "year": data.year
-        }])
+        # Daten in exakt derselben Struktur wie beim Training
 
-        # Pipeline:
-        # Imputation + Random Forest
+        input_data = pd.DataFrame([{
+    "air_temperature": data.air_temperature,
+    "dew_temperature": data.dew_temperature,
+    "wind_speed": data.wind_speed,
+    "sea_level_pressure": data.sea_level_pressure,
+    "square_feet": data.square_feet,
+    "building_age": data.building_age,
+    "hour": data.hour,
+    "day_of_week": data.day_of_week,
+    "month": data.month,
+    "is_weekend": data.is_weekend
+}])
+
+
+        # Vorhersage
         prediction = rf_pipeline.predict(input_data)[0]
 
         return {
@@ -141,6 +143,7 @@ def get_weather(
     latitude: float = 51.2277,
     longitude: float = 6.7735
 ):
+
     try:
 
         response = requests.get(
@@ -171,3 +174,4 @@ def get_weather(
             status_code=502,
             detail=f"Weather API error: {str(e)}"
         )
+
