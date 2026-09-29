@@ -52,18 +52,16 @@ if hasattr(rf_pipeline, "feature_names_in_"):
 # -----------------------------------------------------------------
 
 class PredictionInput(BaseModel):
-
+    square_feet: float
+    year_built: float
     air_temperature: float
     dew_temperature: float
     wind_speed: float
     sea_level_pressure: float
-    square_feet: float
-    building_age: float
-
     hour: int
     day_of_week: int
     month: int
-    is_weekend: int
+    year: int
 
 class WeatherResponse(BaseModel):
 
@@ -93,26 +91,20 @@ def root():
 
 @app.post("/predict")
 def predict_energy(data: PredictionInput):
-
     try:
-
-        # Daten in exakt derselben Struktur wie beim Training
-
         input_data = pd.DataFrame([{
-    "air_temperature": data.air_temperature,
-    "dew_temperature": data.dew_temperature,
-    "wind_speed": data.wind_speed,
-    "sea_level_pressure": data.sea_level_pressure,
-    "square_feet": data.square_feet,
-    "building_age": data.building_age,
-    "hour": data.hour,
-    "day_of_week": data.day_of_week,
-    "month": data.month,
-    "is_weekend": data.is_weekend
-}])
+            "square_feet": data.square_feet,
+            "year_built": data.year_built,
+            "air_temperature": data.air_temperature,
+            "dew_temperature": data.dew_temperature,
+            "wind_speed": data.wind_speed,
+            "sea_level_pressure": data.sea_level_pressure,
+            "hour": data.hour,
+            "day_of_week": data.day_of_week,
+            "month": data.month,
+            "year": data.year
+        }])
 
-
-        # Vorhersage
         prediction = rf_pipeline.predict(input_data)[0]
 
         return {
@@ -123,7 +115,6 @@ def predict_energy(data: PredictionInput):
         }
 
     except Exception as e:
-
         raise HTTPException(
             status_code=500,
             detail=f"Prediction error: {str(e)}"

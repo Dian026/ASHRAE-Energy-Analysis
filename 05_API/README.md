@@ -47,15 +47,17 @@ FastAPI
 
 ## Modell
 
-Für die Vorhersage wird eine Random-Forest-Pipeline verwendet.
+Für die Vorhersage wird ein **Random-Forest-Regressionsmodell** verwendet.
 
-Die Pipeline befindet sich lokal in:
+Das Modell befindet sich lokal in:
 
 ```text
 05_API/rf_pipeline.joblib
 ```
 
-Sie verwendet 10 Merkmale:
+### Verwendete Features
+
+Das Modell verwendet 10 Merkmale:
 
 ```text
 square_feet
@@ -70,23 +72,62 @@ month
 year
 ```
 
-Die Modelldatei wird über `.gitignore` von Git ausgeschlossen.
+Zielvariable:
+
+```text
+meter_reading
+```
+
+Die Modelldatei wird aufgrund ihrer Größe über `.gitignore` von Git ausgeschlossen.
+
+### Modellparameter
+
+```text
+n_estimators = 100
+criterion = squared_error
+max_depth = 20
+random_state = 42
+```
+
+---
+
+## Modellleistung
+
+Das Modell wurde mit einem Train-Test-Split von **80 % / 20 %** evaluiert.
+
+Die verwendete Datenbasis umfasst:
+
+```text
+Gesamte Beobachtungen: 495161
+Trainingsdaten:        396128
+Testdaten:              99033
+```
+
+Ergebnisse des Random-Forest-Modells:
+
+| Kennzahl |   Wert |
+| -------- | -----: |
+| MAE      |  17.08 |
+| RMSE     |  50.44 |
+| R²       | 0.9838 |
+
+Die Kennzahlen wurden auf den Testdaten berechnet.
 
 ---
 
 ## Installation
 
-Abhängigkeiten installieren:
-
-```powershell
-pip install -r 05_API/requirements.txt
-```
-
-Optional kann vorher eine virtuelle Umgebung erstellt werden:
+Optional kann zunächst eine virtuelle Umgebung erstellt werden:
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
+```
+
+Anschließend die Abhängigkeiten installieren:
+
+```powershell
+pip install -r 05_API/requirements.txt
 ```
 
 ---
@@ -96,16 +137,20 @@ python -m venv .venv
 Aus dem Projektverzeichnis:
 
 ```powershell
-python -m uvicorn prediction_api:app --app-dir 05_API --port 8002
+python -m uvicorn prediction_api:app --app-dir 05_API --port 8001
 ```
 
 Die API ist anschließend erreichbar unter:
 
-http://127.0.0.1:8002
+```text
+http://127.0.0.1:8001
+```
 
 Die interaktive Swagger-Dokumentation befindet sich unter:
 
-http://127.0.0.1:8002/docs
+```text
+http://127.0.0.1:8001/docs
+```
 
 ---
 
@@ -126,14 +171,17 @@ Dieser Endpoint prüft, ob die API aktiv ist.
 ### Test
 
 ```text
-http://127.0.0.1:8002/
+http://127.0.0.1:8001/
 ```
 
 ### Beispielantwort
 
 ```json
 {
-  "message": "ASHRAE Energy Prediction API is running"
+  "message": "ASHRAE Energy Prediction API is running",
+  "model": "Random Forest",
+  "version": "1.0.0",
+  "features": 10
 }
 ```
 
@@ -141,7 +189,7 @@ http://127.0.0.1:8002/
 
 ## 2. POST /predict
 
-Dieser Endpoint berechnet eine Energieverbrauchsprognose mit der Random-Forest-Pipeline.
+Dieser Endpoint berechnet eine Energieverbrauchsprognose mit dem Random-Forest-Modell.
 
 ### Beispielanfrage
 
@@ -160,15 +208,15 @@ Dieser Endpoint berechnet eine Energieverbrauchsprognose mit der Random-Forest-P
 }
 ```
 
-### Beispielantwort
+### Getestete Antwort
 
 ```json
 {
-  "predicted_energy_consumption": 166.1364
+  "predicted_energy_consumption": 439.9721
 }
 ```
 
-Die zurückgegebene Zahl ist die Vorhersage des Machine-Learning-Modells und keine direkt gemessene Verbrauchszahl.
+Die zurückgegebene Zahl ist eine Vorhersage des Machine-Learning-Modells und keine direkt gemessene Verbrauchszahl.
 
 ---
 
@@ -178,12 +226,10 @@ Der Endpoint ruft aktuelle Wetterdaten über die **Open-Meteo API** ab.
 
 ### Parameter
 
-Die folgenden Parameter werden an den Endpoint übergeben:
-
 | Name        | Typ    | Position | Standardwert |
-| ----------- | ------ | -------- | -----------: |
-| `latitude`  | number | query    |    `51.2277` |
-| `longitude` | number | query    |     `6.7735` |
+| ----------- | ------ | -------- | ------------ |
+| `latitude`  | number | query    | `51.2277`    |
+| `longitude` | number | query    | `6.7735`     |
 
 ### Antwort
 
@@ -199,33 +245,22 @@ Der Endpoint gibt die aktuellen Wetterdaten zurück:
 ### Beispielaufruf
 
 ```text
-http://127.0.0.1:8002/weather
-```
-
-### Tatsächliche Antwort zum Zeitpunkt des Tests
-
-```json
-{
-  "latitude": 51.2277,
-  "longitude": 6.7735,
-  "temperature": 18.7,
-  "wind_speed": 6.8
-}
-```
-
-### PowerShell-Test
-
-```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8002/weather" -Method Get
+http://127.0.0.1:8001/weather
 ```
 
 ### Beispiel mit eigenen Koordinaten
 
 ```text
-http://127.0.0.1:8002/weather?latitude=51.2277&longitude=6.7735
+http://127.0.0.1:8001/weather?latitude=51.2277&longitude=6.7735
 ```
 
-Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die verwendeten Koordinaten.
+Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die angegebenen Koordinaten.
+
+### PowerShell-Test
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8001/weather" -Method Get
+```
 
 ---
 
@@ -233,7 +268,9 @@ Die API liefert damit die aktuelle Temperatur und Windgeschwindigkeit für die v
 
 Die API kann über Swagger getestet werden:
 
-http://127.0.0.1:8002/docs
+```text
+http://127.0.0.1:8001/docs
+```
 
 Dort stehen die drei Endpoints zur Verfügung:
 
@@ -257,7 +294,7 @@ GET  /weather
 └── rf_pipeline.joblib
 ```
 
-Die Datei `rf_pipeline.joblib` wird nicht in Git gespeichert.
+Die Datei `rf_pipeline.joblib` wird aufgrund ihrer Größe nicht in Git gespeichert.
 
 ---
 
@@ -267,11 +304,13 @@ Die API-Schicht des Projekts ist funktionsfähig.
 
 ### Implementiert und getestet
 
-* Random-Forest-Pipeline geladen
+* Random-Forest-Modell geladen
 * `GET /` erfolgreich getestet
 * `POST /predict` erfolgreich getestet
-* `GET /weather` erfolgreich getestet
+* `GET /weather` implementiert
 * Swagger-Dokumentation über `/docs`
+* 10 Features der alten Modellversion wiederhergestellt
+* Random-Forest-Modell mit den alten Features gespeichert
 
 Die API bildet damit die letzte technische Schicht des Projekts:
 
