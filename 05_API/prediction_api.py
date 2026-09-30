@@ -85,13 +85,17 @@ def root():
         "features": 10
     }
 
+
 # -----------------------------------------------------------------
 # 5. Prediction Endpoint
 # -----------------------------------------------------------------
 
 @app.post("/predict")
 def predict_energy(data: PredictionInput):
+
     try:
+
+        # Genau dieselbe Reihenfolge wie beim trainierten Modell
         input_data = pd.DataFrame([{
             "square_feet": data.square_feet,
             "year_built": data.year_built,
@@ -105,6 +109,8 @@ def predict_energy(data: PredictionInput):
             "year": data.year
         }])
 
+        # Vorhersage mit der gespeicherten Pipeline
+        # Die Pipeline übernimmt automatisch die Imputation.
         prediction = rf_pipeline.predict(input_data)[0]
 
         return {
@@ -115,10 +121,12 @@ def predict_energy(data: PredictionInput):
         }
 
     except Exception as e:
+
         raise HTTPException(
             status_code=500,
             detail=f"Prediction error: {str(e)}"
         )
+
 
 
 # -----------------------------------------------------------------

@@ -14,7 +14,7 @@
 
 ```text
 SQL / MySQL → Python → Statistik → Feature Engineering → Machine Learning → API
-````
+```
 
 ---
 
@@ -26,13 +26,14 @@ SQL / MySQL → Python → Statistik → Feature Engineering → Machine Learnin
 
 ## ✨ Projekt-Highlights
 
-| Kennzahl                      | Ergebnis                                                                |
-| ----------------------------- | ----------------------------------------------------------------------- |
-| 📊 Datenbasis                 | > 20 Mio. Zeilen (`train_full`), Analyse auf **500.000 Strommessungen** |
-| 🌡️ Temperatur ↔ Verbrauch     | Pearson r = **0,227**, p < 0,001 (signifikant positiv)                  |
-| 🏗️ Unterschiede nach Nutzung  | ANOVA F = 3,500, p = 0,0084 (signifikant)                               |
-| 🤖 Random Forest              | R² = **0,9838**, MAE = **17,08**, RMSE = **50,44**                      |
-| 🚀 Deployment                 | Live vorhersagefähige **FastAPI**-Anwendung mit Swagger-UI              |
+| Kennzahl             | Ergebnis                                                                                  |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| 📊 Datenbasis        | > 20 Mio. Zeilen in `train_full`, davon 500.000 Messungen für das ML-Modell               |
+| 🧹 Datenvorbereitung | 500.000 Beobachtungen beibehalten, fehlende Feature-Werte per Median-Imputation behandelt |
+| 🤖 Random Forest     | R² = **0,9846**, MAE = **16,12**, RMSE = **48,62**                                        |
+| 🌳 Modell            | RandomForestRegressor mit 100 Bäumen                                                      |
+| 🚀 Deployment        | FastAPI-Anwendung mit Swagger/OpenAPI                                                     |
+| 🔌 API-Test          | `/predict` erfolgreich mit **440,6812** getestet                                          |
 
 Das finale Random-Forest-Modell wird für die Vorhersage des Energieverbrauchs verwendet und anschließend über eine FastAPI-Anwendung bereitgestellt.
 
@@ -191,13 +192,27 @@ Dadurch kann das Modell zeitliche Schwankungen des Energieverbrauchs berücksich
 
 Die verwendeten Features werden in numerische Werte konvertiert.
 
-Fehlende numerische Werte werden im finalen Machine-Learning-Pipeline automatisch mit der Median-Imputation behandelt:
+Die **500.000 ausgewählten Beobachtungen bleiben erhalten**. Fehlende Werte in den numerischen Features werden nicht durch das Löschen von Zeilen behandelt, sondern innerhalb der Machine-Learning-Pipeline durch eine Median-Imputation ersetzt:
 
 ```python
 SimpleImputer(strategy="median")
 ```
 
-Beobachtungen ohne gültigen Zielwert `meter_reading` werden entfernt.
+Dadurch bleiben die verfügbaren Beobachtungen erhalten und fehlende Feature-Werte werden anhand des Medians der Trainingsdaten ersetzt.
+
+Die Zielvariable `meter_reading` wird für die Modellierung verwendet.
+
+### Train-Test-Split
+
+Die Daten werden in einen Trainings- und einen Testdatensatz aufgeteilt:
+
+| Datensatz   |  Anzahl |
+| ----------- | ------: |
+| Gesamtdaten | 500.000 |
+| Training    | 400.000 |
+| Test        | 100.000 |
+
+Es wird ein **80/20-Split** mit `random_state=42` verwendet.
 
 ### Finaler Feature-Engineering-Prozess
 
@@ -212,7 +227,7 @@ Auswahl der 10 Features
    ↓
 Numerische Konvertierung
    ↓
-Behandlung fehlender Werte
+Median-Imputation (in der Pipeline)
    ↓
 Random Forest
    ↓
@@ -239,18 +254,36 @@ Bewertung anhand von **MAE**, **RMSE** und **R²**.
 
 ### Ergebnisübersicht
 
-| Modell             |       MAE |      RMSE |         R² |
-| ------------------ | --------: | --------: | ---------: |
-| Lineare Regression |    206,35 |    328,86 |     0,3100 |
-| **Random Forest**  | **17,08** | **50,44** | **0,9838** |
+| Modell                        |       MAE |      RMSE |         R² |
+| ----------------------------- | --------: | --------: | ---------: |
+| Lineare Regression            |    230,26 |    359,67 |     0,1649 |
+| Log-transformierte Regression |    224,47 |    426,45 |    −0,1740 |
+| **Random Forest**             | **16,12** | **48,62** | **0,9846** |
+
+Die linearen Modelle verwenden ausschließlich `air_temperature` und `square_feet`. Der Random Forest verwendet die zehn oben genannten Merkmale.
+
+Das Random-Forest-Modell basiert auf **500.000 Beobachtungen**, aufgeteilt in **400.000 Trainingsdaten** und **100.000 Testdaten**. Die Evaluation erfolgte auf dem separaten Testdatensatz.
 
 ### Random Forest – Analyse der Fehler
 
-Für den Random Forest beträgt der MAE **17,08**. Dies entspricht dem durchschnittlichen absoluten Fehler zwischen den vorhergesagten und den tatsächlichen Werten.
+Für den Random Forest beträgt der **MAE 16,12**. Der RMSE beträgt **48,62** und das R² beträgt **0,9846**.
 
-Der RMSE beträgt **50,44** und das R² beträgt **0,9838**.
+Das Modell verwendet zehn Merkmale:
 
-Der beobachtete mittlere Fehler beträgt **-0,08** und liegt damit sehr nahe bei null.
+```text
+square_feet
+year_built
+air_temperature
+dew_temperature
+wind_speed
+sea_level_pressure
+hour
+day_of_week
+month
+year
+```
+
+Die Merkmale werden innerhalb der Pipeline mit einer Median-Imputation verarbeitet. Anschließend erfolgt die Vorhersage mit einem `RandomForestRegressor` mit 100 Bäumen.
 
 ### Finales Modell für die API
 
@@ -278,13 +311,13 @@ RandomForestRegressor(
 )
 ```
 
-Das finale Modell wurde auf **500.000 Beobachtungen** und damit auf **100 % der verfügbaren Daten nach der Datenvorbereitung** trainiert.
-
-Das trainierte Pipeline-Modell wird als Joblib-Datei gespeichert:
+Das trainierte Pipeline-Modell wird gespeichert als:
 
 ```text
 05_API/rf_pipeline.joblib
 ```
+
+Das für die API gespeicherte Modell (`rf_pipeline.joblib`) wurde auf den 400.000 Trainingsdaten trainiert und auf den 100.000 Testdaten evaluiert.
 
 ---
 
@@ -292,32 +325,25 @@ Das trainierte Pipeline-Modell wird als Joblib-Datei gespeichert:
 
 Die Verbrauchsdaten weisen eine **asymmetrische Verteilung** auf. Deshalb wurde zusätzlich eine Log-Transformation getestet. Diese führte jedoch zu keiner Verbesserung des RMSE.
 
-Der **Random Forest** erzielt die besten Modellkennzahlen:
+Der Random Forest verwendet zehn Gebäude-, Wetter- und Zeitmerkmale:
+`square_feet`, `year_built`, `air_temperature`, `dew_temperature`, `wind_speed`, `sea_level_pressure`, `hour`, `day_of_week`, `month` und `year`.
 
-| Modell                        |       MAE |      RMSE |         R² |
-| ----------------------------- | --------: | --------: | ---------: |
-| Lineare Regression            |    230,26 |    359,67 |     0,1649 |
-| Log-transformierte Regression |    224,47 |    426,45 |    −0,1740 |
-| **Random Forest**             | **16,12** | **48,62** | **0,9846** |
+Durch die Verwendung eines Random Forest können auch nichtlineare Zusammenhänge und Interaktionen zwischen den Merkmalen berücksichtigt werden.
 
-Die linearen Modelle verwenden `air_temperature` und `square_feet` und zeigen eine begrenzte Vorhersagequalität. Der Random Forest berücksichtigt zusätzlich **Gebäude-, Wetter- und Zeitmerkmale** und erzielt deutlich bessere Ergebnisse.
+Mit einem R² von 0,9846, einem MAE von 16,12 und einem RMSE von 48,62 zeigt das finale Modell eine hohe Vorhersageleistung auf dem verwendeten Testdatensatz.
 
-> **Hinweis:** Die Modelle wurden auf unterschiedlich großen Testdatensätzen bewertet. Für einen direkten Vergleich sollten alle Modelle auf demselben Train-Test-Split evaluiert werden.
+> **Hinweis:** Der Train-Test-Split erfolgt zufällig. Da Gebäude in stündlichen Messreihen sowohl in den Trainings- als auch in den Testdaten vorkommen, kann die Vorhersagequalität für vollständig unbekannte Gebäude geringer ausfallen.
 
-
-
+---
 
 ## 🔍 Wichtigste Ergebnisse & Interpretation
 
-* Der Energieverbrauch zeigt eine deutliche Streuung und einen statistisch signifikanten **positiven Zusammenhang mit der Außentemperatur**.
-
-* Die ANOVA bestätigt **signifikante Unterschiede** im Verbrauch zwischen mindestens zwei Gebäudenutzungen.
-
-* Die linearen Modelle liefern eine geringere Vorhersagequalität als das Random-Forest-Modell.
-
-* Der **Random Forest** verwendet Gebäude-, Wetter- und Zeitmerkmale und erreicht auf dem verwendeten Testdatensatz ein R² von **0,9838**, einen MAE von **17,08** und einen RMSE von **50,44**.
-
-* Die Analyse berücksichtigt sowohl Gesamtverbrauch als auch Durchschnittswerte mit und ohne Nullverbrauch, um den Einfluss von Messungen mit Verbrauch = 0 transparent darzustellen.
+* Der Energieverbrauch zeigt eine deutliche Streuung und einen positiven Zusammenhang mit der Außentemperatur.
+* Die statistischen Analysen zeigen Unterschiede im Energieverbrauch zwischen verschiedenen Gebäude- und Nutzungskategorien.
+* Der Random Forest berücksichtigt Gebäude-, Wetter- und Zeitmerkmale und erreicht auf dem verwendeten Testdatensatz ein R² von 0,9846, einen MAE von 16,12 und einen RMSE von 48,62.
+* Für das Machine Learning wurden 500.000 Beobachtungen verwendet. Die Daten wurden in 400.000 Trainingsdaten und 100.000 Testdaten aufgeteilt.
+* Fehlende Feature-Werte werden durch Median-Imputation behandelt. Die 500.000 Beobachtungen werden dabei nicht durch das Entfernen von Zeilen reduziert.
+* Die Nullwerte von `meter_reading` wurden nicht automatisch entfernt, da ein Verbrauch von `0` eine reale Messung darstellen kann.
 
 > **Performance-Hinweis:** `train_full` enthält über 20 Millionen Zeilen. Aggregationen wurden bewusst auf dem vollständigen Datensatz durchgeführt, ohne Daten zu löschen oder zu verändern – Datenintegrität wurde gegenüber reiner Abfrage-Optimierung priorisiert.
 
@@ -361,6 +387,17 @@ ASHRAE-Daten → SQL/MySQL → Python/EDA → Statistik → Feature Engineering
 | `POST`  | `/predict` | Vorhersage des Energieverbrauchs |
 | `GET`   | `/weather` | Abruf aktueller Wetterdaten      |
 
+### Beispiel-Response `/`
+
+```json
+{
+  "message": "ASHRAE Energy Prediction API is running",
+  "model": "Random Forest",
+  "version": "1.0.0",
+  "features": 10
+}
+```
+
 ### Beispiel-Request `/predict`
 
 ```json
@@ -378,13 +415,23 @@ ASHRAE-Daten → SQL/MySQL → Python/EDA → Statistik → Feature Engineering
 }
 ```
 
-### Beispiel-Response
+### Beispiel-Response `/predict`
 
 ```json
 {
-  "predicted_energy_consumption": 166.1364
+  "predicted_energy_consumption": 440.6812
 }
 ```
+
+Die Vorhersage wurde mit denselben Eingabewerten sowohl im Notebook als auch über die API getestet.
+
+```text
+Notebook : 440.6812
+API      : 440.6812
+```
+
+Damit liefern Notebook und API für dieselben Eingabedaten dieselbe Vorhersage.
+
 
 ### Endpoint `/weather`
 
@@ -403,18 +450,20 @@ Der Endpoint `/weather` ermöglicht den Abruf aktueller Wetterdaten anhand geogr
 GET /weather?latitude=51.2277&longitude=6.7735
 ```
 
+Der Endpoint wurde erfolgreich mit HTTP-Statuscode `200` getestet.
+
 **Beispiel-Response:**
 
 ```json
 {
   "latitude": 51.2277,
   "longitude": 6.7735,
-  "temperature": 21.4,
-  "wind_speed": 8.6
+  "temperature": 28.5,
+  "wind_speed": 10.4
 }
 ```
 
-Der HTTP-Statuscode `200` bestätigt, dass die Anfrage erfolgreich verarbeitet wurde.
+> Die Werte sind Live-Daten (Open-Meteo) und ändern sich bei jedem Abruf.
 
 ### Swagger / OpenAPI
 
@@ -423,10 +472,18 @@ Die API stellt eine interaktive Swagger/OpenAPI-Dokumentation bereit.
 Nach dem Start des Servers ist die Dokumentation erreichbar unter:
 
 ```text
-http://127.0.0.1:8000/docs
+http://127.0.0.1:8002/docs
 ```
 
-Über Swagger können die Endpoints direkt getestet werden, beispielsweise durch Eingabe von `latitude` und `longitude` für den Endpoint `/weather`.
+Über Swagger können die Endpoints `/`, `/predict` und `/weather` direkt getestet werden.
+
+### API-Status
+
+| Endpoint   | Methode | Status |
+| ---------- | ------- | ------ |
+| `/`        | GET     | 200 ✅  |
+| `/predict` | POST    | 200 ✅  |
+| `/weather` | GET     | 200 ✅  |
 
 > Die trainierten Modelle (`*.joblib`) werden lokal genutzt und sind aufgrund ihrer Größe via `.gitignore` von Git ausgeschlossen.
 
@@ -571,5 +628,3 @@ Dieses Projekt steht unter der [MIT-Lizenz](LICENSE).
 **Mamadou Dian Diallo**
 
 GitHub: [@Dian026](https://github.com/Dian026)
-
-
