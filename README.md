@@ -375,18 +375,34 @@ Mit einem **R² von 0,9846**, einem **MAE von 16,12** und einem **RMSE von 48,62
 
 ## 🔍 Wichtigste Ergebnisse & Interpretation
 
-* Der Energieverbrauch zeigt eine deutliche Streuung und einen positiven Zusammenhang mit der Außentemperatur.
-* Die statistischen Analysen zeigen Unterschiede im Energieverbrauch zwischen verschiedenen Gebäude- und Nutzungskategorien.
-* Der Random Forest berücksichtigt Gebäude-, Wetter- und Zeitmerkmale und erreicht auf dem verwendeten Testdatensatz ein R² von 0,9953, einen MAE von 8,16 und einen RMSE von 27,04.
-* Für das Machine Learning wurden 500.000 Beobachtungen verwendet. Die Daten wurden in 400.000 Trainingsdaten und 100.000 Testdaten aufgeteilt.
-* Fehlende Feature-Werte werden durch Median-Imputation behandelt. Die 500.000 Beobachtungen werden dabei nicht durch das Entfernen von Zeilen reduziert.
-* Die Nullwerte von `meter_reading` wurden nicht automatisch entfernt, da ein Verbrauch von `0` eine reale Messung darstellen kann.
+## 🔍 Wichtigste Ergebnisse
 
-> **Performance-Hinweis:** `train_full` enthält über 20 Millionen Zeilen. Aggregationen wurden bewusst auf dem vollständigen Datensatz durchgeführt, ohne Daten zu löschen oder zu verändern – Datenintegrität wurde gegenüber reiner Abfrage-Optimierung priorisiert.
+* Die Datenanalyse zeigt deutliche Unterschiede im Energieverbrauch zwischen Gebäuden und Nutzungskategorien.
+* Ein **Random Forest Regressor** wurde mit Gebäude-, Wetter- und Zeitmerkmalen trainiert.
+* Bei der klassischen Evaluation (zufälliger Split, bekannte Gebäude) erreicht das Modell **R² = 0,9846**, **MAE = 16,12** und **RMSE = 48,62**.
+* Bei der Evaluation auf **unbekannten Gebäuden** (`GroupShuffleSplit`) sinkt das **R² auf 0,1945**.
+* Eine zufällige Datenaufteilung kann die Generalisierungsfähigkeit daher überschätzen. Die gebäudebasierte Validierung liefert eine realistischere Einschätzung.
 
-Visualisierungen: [`results/figures/`](results/figures/)
+### 🏗️ Generalisierung auf unbekannte Gebäude
 
----
+Für die gebäudebasierte Evaluation wurden **40 Gebäude für das Training und 10 Gebäude für den Test** verwendet. Kein Gebäude kommt in beiden Datensätzen vor.
+
+| Evaluation         |    MAE |   RMSE |     R² |
+| ------------------ | -----: | -----: | -----: |
+| Klassischer Split  |  16,12 |  48,62 | 0,9846 |
+| Unbekannte Gebäude | 472,05 | 932,92 | 0,1945 |
+
+**Fazit:** Das Modell erzielt eine hohe Leistung bei bekannten Gebäuden. Auf unbekannten Gebäuden ist die Leistung deutlich geringer. Die **Generalisierung auf neue Gebäude** ist daher die zentrale Herausforderung.
+
+> **Hinweis:** Die gebäudebasierte Evaluation basiert auf einem einzelnen Split mit 10 Testgebäuden. Das Ergebnis kann stark von der Auswahl dieser Gebäude abhängen. Eine Kreuzvalidierung mit `GroupKFold` wäre ein sinnvoller nächster Schritt.
+
+### Key Finding
+
+The model achieves a high R² with the classical evaluation, but its performance decreases significantly when predicting energy consumption for buildings that were not seen during training.
+
+This evaluation highlights the importance of testing **model generalization** using a validation strategy that reflects real-world conditions.
+
+
 
 ## 🌐 API
 
@@ -415,6 +431,19 @@ ASHRAE-Daten → SQL/MySQL → Python/EDA → Statistik → Feature Engineering
 ├── requirements.txt
 └── README.md
 ```
+
+### Modelldatei
+
+Die Datei `rf_pipeline.joblib` enthält die Random-Forest-Pipeline, die von der API verwendet wird.
+
+| Eigenschaft | Wert                              |
+| ----------- | --------------------------------- |
+| Datei       | `05_API/rf_pipeline.joblib`       |
+| Größe       | ca. 2,19 GB (2.191.874.817 Bytes) |
+| Format      | Joblib                            |
+
+Aufgrund ihrer Größe ist die Modelldatei nicht im GitHub-Repository enthalten. Um die API lokal auszuführen, muss die Datei im Ordner `05_API/` liegen. Die Datei kann mit dem Notebook `04_Machine_Learning/ml_model.ipynb` erzeugt werden. Die API lädt die Pipeline beim Start automatisch.
+
 
 ### Endpoints
 
