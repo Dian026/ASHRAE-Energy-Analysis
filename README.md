@@ -554,6 +554,8 @@ Geprüft wurden: fehlende Werte, Duplikate, Datensatzgrößen, Schlüssel, Verkn
 
 ## 📁 Projektstruktur
 
+## 📁 Projektstruktur
+
 ```text
 ASHRAE-Energy-Analysis/
 
@@ -588,6 +590,9 @@ ASHRAE-Energy-Analysis/
 ├── results/
 │   └── figures/
 │
+├── assets/
+│   └── qr_code.png
+│
 ├── presentation/
 │   └── ASHRAE_Presentation.pptx
 │
@@ -596,8 +601,6 @@ ASHRAE-Energy-Analysis/
 ├── LICENSE
 └── README.md
 ```
-
----
 
 ## ⚙️ Installation
 
@@ -636,9 +639,17 @@ Die vollständige Projektpräsentation befindet sich unter [`presentation/ASHRAE
 
 Enthält den vollständigen Workflow von SQL und Python über Statistik und Machine Learning bis hin zur FastAPI-Anwendung.
 
-Ein QR-Code, der direkt auf das Repository verweist, kann mit `create_qr.py` erzeugt werden.
+Der folgende QR-Code verweist direkt auf das Repository:
 
----
+<p align="center">
+  <img src="assets/qr_code.png" alt="QR-Code zum GitHub-Repository" width="180">
+</p>
+
+Der QR-Code kann mit `create_qr.py` neu erzeugt werden:
+
+```bash
+python create_qr.py
+```
 
 ## 🏁 Fazit
 
