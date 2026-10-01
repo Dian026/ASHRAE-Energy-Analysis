@@ -367,7 +367,7 @@ Der Random Forest verwendet zehn Gebäude-, Wetter- und Zeitmerkmale:
 
 Durch die Verwendung eines Random Forest können auch **nichtlineare Zusammenhänge und Interaktionen zwischen den Merkmalen** berücksichtigt werden.
 
-Mit einem **R² von 0,9953**, einem **MAE von 8,16** und einem **RMSE von 27,04** zeigt das finale Modell eine hohe Vorhersageleistung auf dem verwendeten Testdatensatz.
+Mit einem **R² von 0,9846**, einem **MAE von 16,12** und einem **RMSE von 48,62** zeigt das finale Modell eine hohe Vorhersageleistung auf dem verwendeten Testdatensatz.
 
 > **Hinweis zur Aussagekraft:** Der Train-Test-Split erfolgt zufällig. Da Gebäude in stündlichen Messreihen sowohl in den Trainings- als auch in den Testdaten vorkommen, kann die Vorhersagequalität für vollständig unbekannte Gebäude geringer ausfallen. Eine Validierung mit gebäudebasierter Trennung wäre ein sinnvoller nächster Schritt.
 
