@@ -581,7 +581,6 @@ Geprüft wurden: fehlende Werte, Duplikate, Datensatzgrößen, Schlüssel, Verkn
 
 ---
 
-## 📁 Projektstruktur
 
 ## 📁 Projektstruktur
 
