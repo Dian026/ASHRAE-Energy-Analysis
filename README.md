@@ -282,7 +282,7 @@ Die Modelle wurden anhand der Kennzahlen MAE, RMSE und R² bewertet.
 | Lineare Regression            |        2 | 230,26 | 359,67 |  0,1649 |
 | Log-transformierte Regression |        2 | 224,47 | 426,45 | -0,1740 |
 | Random Forest                 |        2 | 151,01 | 259,10 |  0,5666 |
-| Random Forest                 |       10 |  15,93 |  47,97 |  0,9851 |
+| Random Forest                 |       10 |  16,82 |  48,99 |  0,9845 |
 
 Die beiden Random-Forest-Modelle wurden mit denselben Trainings- und Testdaten ausgewertet. Die Ergebnisse der linearen Modelle stammen aus der vorherigen Auswertung und sind nur direkt vergleichbar, wenn dieselbe Datenaufteilung und Datenvorverarbeitung verwendet wurden.
 
@@ -327,9 +327,9 @@ year
 
 | Kennzahl |   Wert |
 | -------- | -----: |
-| MAE      |  15,93 |
-| RMSE     |  47,97 |
-| R²       | 0,9851 |
+| MAE      |  16,82 |
+| RMSE     |  48,99 |
+| R²       | 0,9845 |
 
 ### Fehleranalyse
 
