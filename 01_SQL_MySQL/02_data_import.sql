@@ -1,29 +1,28 @@
--- =====================================================================
--- Datenimport & Datenintegration
--- =====================================================================
---
--- WICHTIG: Dieses Skript verwendet relative Pfade (data/...).
--- Es muss daher aus dem PROJEKT-ROOT-VERZEICHNIS ausgeführt werden
--- (ASHRAE-Energy-Analysis/), NICHT aus dem Ordner 01_SQL_MySQL/.
---
--- Beispiel (MySQL-Kommandozeile), aus dem Projekt-Root:
---   mysql -u root -p --local-infile=1 ashrae_energy < 01_SQL_MySQL/02_data_import.sql
---
--- Die CSV-Dateien müssen sich in einem Ordner "data/" im Projekt-Root
--- befinden:
---   ASHRAE-Energy-Analysis/data/train.csv
---   ASHRAE-Energy-Analysis/data/weather_train.csv
---   ASHRAE-Energy-Analysis/data/building_metadata.csv
---
--- Dieser data/-Ordner ist bewusst über .gitignore von Git ausgeschlossen,
--- da die Dateien zu groß für GitHub sind.
---
--- VORAUSSETZUNG (Server-Seite):
--- Zusätzlich zum Client-Flag --local-infile=1 muss auch der MySQL-Server
--- selbst LOCAL INFILE erlauben. Vorher prüfen mit:
---   SHOW VARIABLES LIKE 'local_infile';
--- Falls der Wert "OFF" ist, einmalig aktivieren mit:
---   SET GLOBAL local_infile = 1;
+
+-- #####################################################################
+-- 02. DATENIMPORT & DATENINTEGRATION
+-- #####################################################################
+
+-- Voraussetzungen:
+-- 1. Die CSV-Dateien müssen im Ordner data/ im Projektverzeichnis liegen.
+-- 2. Das Skript muss aus dem Projekt-Root ausgeführt werden.
+-- 3. MySQL LOCAL INFILE muss aktiviert sein.
+
+-- Erwartete Dateien:
+-- data/train.csv
+-- data/weather_train.csv
+-- data/building_metadata.csv
+
+-- Ausführung aus dem Projekt-Root:
+-- mysql -u root -p --local-infile=1 ashrae_energy < 01_SQL_MySQL/02_data_import.sql
+
+-- Server-Einstellung prüfen:
+-- SHOW VARIABLES LIKE 'local_infile';
+
+-- Falls erforderlich und ausreichende Rechte vorhanden sind:
+-- SET GLOBAL local_infile = 1;
+
+-- Hinweis: Die großen CSV-Dateien werden nicht auf GitHub gespeichert.
 -- #####################################################################
 
 USE ashrae_energy;
@@ -32,9 +31,12 @@ USE ashrae_energy;
 SET SESSION unique_checks = 0;
 SET SESSION foreign_key_checks = 0;
 
+-- Integritätsprüfungen nach dem Import wieder aktivieren
+SET SESSION unique_checks = 1;
+SET SESSION foreign_key_checks = 1;
 
 -- =====================================================================
--- 4.1 Import der Energieverbrauchsdaten
+-- 3. Import der Energieverbrauchsdaten
 -- =====================================================================
 
 LOAD DATA LOCAL INFILE
@@ -53,7 +55,7 @@ IGNORE 1 ROWS
 
 
 -- =====================================================================
--- 4.2 Import der Wetterdaten
+-- 4. Import der Wetterdaten
 -- =====================================================================
 
 LOAD DATA LOCAL INFILE
@@ -85,7 +87,7 @@ SET
 
 
 -- =====================================================================
--- 4.3 Import der Gebäudedaten
+-- 4.2 Import der Gebäudedaten
 -- =====================================================================
 
 LOAD DATA LOCAL INFILE
@@ -107,10 +109,6 @@ SET
     year_built  = NULLIF(@year_built, ''),
     floor_count = NULLIF(@floor_count, '');
 
-
--- Integritätsprüfungen nach dem Import wieder aktivieren
-SET SESSION unique_checks = 1;
-SET SESSION foreign_key_checks = 1;
 
 
 -- #####################################################################

@@ -3,7 +3,7 @@
 -- =====================================================================
 
 -- =====================================================================
--- 11.1 Energieverbrauch nach Gebäudenutzung
+-- 1. Energieverbrauch nach Gebäudenutzung
 -- =====================================================================
 
 SELECT
@@ -17,7 +17,7 @@ ORDER BY durchschnittlicher_verbrauch DESC;
 
 
 -- =====================================================================
--- 11.2 Durchschnittlicher Verbrauch ohne Nullwerte
+-- 2. Durchschnittlicher Verbrauch ohne Nullwerte
 -- =====================================================================
 --
 -- Diese Analyse betrachtet nur positive Verbrauchswerte.
@@ -36,7 +36,7 @@ ORDER BY durchschnittlicher_verbrauch DESC;
 
 
 -- =====================================================================
--- 11.3 Energieverbrauch nach Gebäudenutzung und Zählertyp
+-- 3. Energieverbrauch nach Gebäudenutzung und Zählertyp
 -- =====================================================================
 --
 -- Diese Analyse vermeidet die direkte Vermischung
@@ -60,7 +60,7 @@ ORDER BY
 
 
 -- =====================================================================
--- 11.4 Gebäude mit dem höchsten Gesamtverbrauch
+-- 4. Gebäude mit dem höchsten Gesamtverbrauch
 -- =====================================================================
 
 SELECT
@@ -78,11 +78,11 @@ LIMIT 10;
 
 
 -- #####################################################################
--- 12. TECHNISCHE KONTROLLE DER DURCHSCHNITTSBERECHNUNG
+-- 5. TECHNISCHE KONTROLLE DER DURCHSCHNITTSBERECHNUNG
 -- #####################################################################
-
--- Vergleich einer manuellen Berechnung mit AVG().
--- Die Differenz sollte sehr nahe bei 0 liegen.
+-- Vergleich der manuellen Durchschnittsberechnung mit AVG().
+-- Gültige Messwerte einschließlich 0 werden berücksichtigt;
+-- NULL-Werte werden ignoriert. Die Differenz sollte nahe bei 0 liegen.
 
 SELECT
     primary_use,
@@ -134,7 +134,7 @@ ORDER BY primary_use;
 
 
 -- =================================================================
--- 16.1 Entwicklung des Energieverbrauchs im Zeitverlauf
+-- 6. Entwicklung des Energieverbrauchs im Zeitverlauf
 -- Zweck:
 -- Untersuchung der täglichen Entwicklung des durchschnittlichen
 -- Energieverbrauchs über den gesamten Analysezeitraum.
@@ -149,7 +149,7 @@ ORDER BY datum;
 
 
 -- =================================================================
--- 16.2 Zusammenhang zwischen Außentemperatur und Energieverbrauch
+-- 7. Zusammenhang zwischen Außentemperatur und Energieverbrauch
 -- Zweck:
 -- Untersuchung des Zusammenhangs zwischen Außentemperatur
 -- und durchschnittlichem Energieverbrauch.
@@ -166,23 +166,7 @@ ORDER BY temperatur;
 
 
 -- =================================================================
--- 16.3 Energieverbrauch nach Gebäudenutzung
--- Zweck:
--- Vergleich des durchschnittlichen Energieverbrauchs
--- zwischen verschiedenen Gebäudenutzungen.
--- =================================================================
-
-SELECT
-    primary_use,
-    COUNT(*) AS anzahl_messungen,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
-FROM ashrae_energy.train_full
-GROUP BY primary_use
-ORDER BY durchschnittlicher_verbrauch DESC;
-
-
--- =================================================================
--- 16.4 Energieverbrauch nach Zählertyp
+-- 8. Energieverbrauch nach Zählertyp
 -- Zweck:
 -- Vergleich der Messungen und des durchschnittlichen Verbrauchs
 -- nach Zählertyp.
@@ -203,45 +187,7 @@ GROUP BY meter
 ORDER BY durchschnittlicher_verbrauch DESC;
 
 
--- =================================================================
--- 16.5 Energieverbrauch nach Gebäudenutzung und Zählertyp
--- Zweck:
--- Detaillierter Vergleich des durchschnittlichen Verbrauchs
--- nach Gebäudenutzung und Zählertyp.
--- =================================================================
-
-SELECT
-    primary_use,
-    meter,
-    COUNT(*) AS anzahl_messungen,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
-FROM ashrae_energy.train_full
-GROUP BY
-    primary_use,
-    meter
-ORDER BY
-    primary_use,
-    durchschnittlicher_verbrauch DESC;
 
 
--- =================================================================
--- 16.6 Gebäude mit dem höchsten Gesamtverbrauch
--- Zweck:
--- Identifikation der 10 Gebäude mit dem höchsten
--- aufsummierten Energieverbrauch.
--- =================================================================
-
-SELECT
-    building_id,
-    primary_use,
-    square_feet,
-    ROUND(SUM(meter_reading), 2) AS gesamtverbrauch
-FROM ashrae_energy.train_full
-GROUP BY
-    building_id,
-    primary_use,
-    square_feet
-ORDER BY gesamtverbrauch DESC
-LIMIT 10;
 
 

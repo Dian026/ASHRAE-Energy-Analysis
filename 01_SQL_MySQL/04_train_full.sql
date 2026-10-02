@@ -1,5 +1,5 @@
 -- =====================================================================
--- Tabellenverknüpfung & Datenintegration mit JOINs
+-- 1- Tabellenverknüpfung & Datenintegration mit JOINs
 -- =====================================================================
 
 
@@ -61,7 +61,7 @@ ORDER BY TABLE_NAME, INDEX_NAME;
 
 
 -- =====================================================================
--- Abfrageplan analysieren, um die Leistung der JOIN-Abfrage zu überprüfen.
+-- 2- Abfrageplan analysieren, um die Leistung der JOIN-Abfrage zu überprüfen.
 -- =====================================================================
 EXPLAIN
 SELECT
@@ -91,7 +91,7 @@ WHERE t.building_id BETWEEN 0 AND 199;
 
 
 -- =====================================================================
--- 9. BEFÜLLUNG VON train_full
+-- 3. BEFÜLLUNG VON train_full
 -- Prozedur zum schrittweisen Befüllen der Tabelle train_full erstellen.
 --
 -- Schrittweise Befüllung (50 Gebäude pro Durchlauf), um sehr große
@@ -167,18 +167,18 @@ FROM ashrae_energy.train_full;
 
 
 -- #####################################################################
--- 10. KONTROLLE DES ANALYSEDATENSATZES
+-- 4. KONTROLLE DES ANALYSEDATENSATZES
 -- #####################################################################
 
 -- =====================================================================
--- 10.1 Struktur
+-- 4.1 Struktur
 -- =====================================================================
 
 DESCRIBE train_full;
 
 
 -- =====================================================================
--- 10.2 Anzahl der Datensätze
+-- 4.2 Anzahl der Datensätze
 -- =====================================================================
 
 SELECT
@@ -187,7 +187,7 @@ FROM train_full;
 
 
 -- =====================================================================
--- 10.3 Erste Datensätze
+-- 4.3 Erste Datensätze
 -- =====================================================================
 
 SELECT *
@@ -196,7 +196,7 @@ LIMIT 10;
 
 
 -- =====================================================================
--- 10.4 Fehlende Temperaturwerte
+-- 4.4 Fehlende Temperaturwerte
 -- =====================================================================
 
 SELECT
@@ -205,7 +205,7 @@ FROM train_full;
 
 
 -- =====================================================================
--- 10.5 Zeitraum der Daten
+-- 4.5 Zeitraum der Daten
 -- =====================================================================
 
 SELECT
@@ -215,7 +215,7 @@ FROM train_full;
 
 
 -- =====================================================================
--- 10.6 Gebäudenutzungen
+-- 4.6 Gebäudenutzungen
 -- =====================================================================
 
 SELECT DISTINCT
@@ -225,7 +225,7 @@ ORDER BY primary_use;
 
 
 -- =====================================================================
--- 10.7 Verteilung der Zählertypen
+-- 4.7 Verteilung der Zählertypen
 -- =====================================================================
 
 SELECT
@@ -237,7 +237,7 @@ ORDER BY meter;
 
 
 -- =====================================================================
--- 10.8 Verbrauchswerte: 0 und positive Werte
+-- 4.8 Verbrauchswerte: 0 und positive Werte
 -- =====================================================================
 
 SELECT
@@ -245,85 +245,5 @@ SELECT
     SUM(meter_reading = 0) AS zero_meter_reading,
     SUM(meter_reading > 0) AS positive_meter_reading
 FROM train_full;
-
-
--- #####################################################################
--- 11. EXPLORATIVE ANALYSE
--- #####################################################################
-
--- =====================================================================
--- 11.1 Energieverbrauch nach Gebäudenutzung
--- =====================================================================
-
-SELECT
-    primary_use,
-    COUNT(*) AS anzahl_messungen,
-    ROUND(SUM(meter_reading), 2) AS gesamtverbrauch,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
-FROM train_full
-GROUP BY primary_use
-ORDER BY durchschnittlicher_verbrauch DESC;
-
-
--- =====================================================================
--- 11.2 Durchschnittlicher Verbrauch ohne Nullwerte
---
--- Diese Analyse betrachtet nur positive Verbrauchswerte.
--- =====================================================================
-
-SELECT
-    primary_use,
-    COUNT(*) AS anzahl_messungen,
-    COUNT(NULLIF(meter_reading, 0)) AS anzahl_messungen_non_zero,
-    ROUND(SUM(meter_reading), 2) AS gesamtverbrauch,
-    ROUND(AVG(NULLIF(meter_reading, 0)), 2)
-        AS durchschnittlicher_verbrauch
-FROM train_full
-GROUP BY primary_use
-ORDER BY durchschnittlicher_verbrauch DESC;
-
-
--- =====================================================================
--- 11.3 Analyse des Energieverbrauchs nach Gebäudenutzung
---      mit Vergleich der Gesamtwerte und der Werte ohne Verbrauch = 0
--- =====================================================================
-
-SELECT
-    primary_use,
-
-    COUNT(*) AS anzahl_messungen,
-
-    COUNT(NULLIF(meter_reading, 0))
-        AS anzahl_messungen_non_zero,
-
-    SUM(meter_reading = 0)
-        AS anzahl_messungen_zero,
-
-    ROUND(
-        100 * SUM(meter_reading = 0) / COUNT(*),
-        2
-    ) AS anteil_zero_prozent,
-
-    ROUND(
-        SUM(meter_reading),
-        2
-    ) AS gesamtverbrauch,
-
-    ROUND(
-        AVG(meter_reading),
-        2
-    ) AS durchschnitt_alle_werte,
-
-    ROUND(
-        AVG(NULLIF(meter_reading, 0)),
-        2
-    ) AS durchschnitt_nur_positive_werte
-
-FROM train_full
-
-GROUP BY primary_use
-
-ORDER BY durchschnitt_nur_positive_werte DESC;
-
 
 

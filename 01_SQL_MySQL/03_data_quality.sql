@@ -1,17 +1,17 @@
 -- =====================================================================
--- Datenqualität & Plausibilitätsprüfung
+-- 1. Datenqualität & Plausibilitätsprüfung
 -- =====================================================================
 
 
 -- =====================================================================
--- 5.1 Tabellenübersicht
+-- 1.1 Tabellenübersicht
 -- =====================================================================
 
 SHOW TABLES;
 
 
 -- =====================================================================
--- 5.2 Anzahl der Datensätze
+-- 1.2 Anzahl der Datensätze
 -- =====================================================================
 
 SELECT COUNT(*) AS anzahl_datensaetze
@@ -31,7 +31,7 @@ SELECT
 FROM train;
 
 -- =====================================================================
--- 5.3 Erste Datensätze überprüfen
+-- 1.3 Erste Datensätze überprüfen
 -- =====================================================================
 
 SELECT *
@@ -46,11 +46,11 @@ SELECT *
 FROM weather_train
 LIMIT 10;
 
--- 6. DATENSTRUKTUR UND DATENQUALITÄT
+-- 2. DATENSTRUKTUR UND DATENQUALITÄT
 -- #####################################################################
 
 -- =====================================================================
--- 6.1 Tabellenstruktur überprüfen
+-- 2.1 Tabellenstruktur überprüfen
 -- =====================================================================
 
 DESCRIBE train;
@@ -61,7 +61,7 @@ DESCRIBE weather_train;
 
 
 -- =====================================================================
--- 6.2 Fehlende Werte in train
+-- 2.2 Fehlende Werte in train
 -- =====================================================================
 SELECT
     COUNT(*) AS gesamt,
@@ -73,7 +73,7 @@ FROM ashrae_energy.train;
 
 
 -- =====================================================================
--- 6.3 Fehlende Werte in building_metadata
+-- 2.3 Fehlende Werte in building_metadata
 -- =====================================================================
 SELECT
     COUNT(*) AS gesamt,
@@ -87,7 +87,7 @@ FROM ashrae_energy.building_metadata;
 
 
 -- =====================================================================
--- 6.4 Fehlende Werte in weather_train
+-- 2.4 Fehlende Werte in weather_train
 -- =====================================================================
 SELECT
     COUNT(*) AS gesamt,
@@ -105,7 +105,7 @@ FROM ashrae_energy.weather_train;
 
 
 -- =====================================================================
--- 6.5 NULL-Werte und 0-Werte im Energieverbrauch
+-- 2.5 NULL-Werte und 0-Werte im Energieverbrauch
 -- =====================================================================
 --
 -- NULL = fehlender Messwert
