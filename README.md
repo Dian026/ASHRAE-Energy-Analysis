@@ -275,29 +275,30 @@ Bewertung anhand von **MAE**, **RMSE** und **R²**.
 
 ### Ergebnisübersicht
 
-| Modell                        |      MAE |     RMSE |         R² |
-| ----------------------------- | -------: | -------: | ---------: |
-| Lineare Regression            |   230,26 |   359,67 |     0,1649 |
-| Log-transformierte Regression |   224,47 |   426,45 |    −0,1740 |
-| **Random Forest**             | **8,16** | **27,04** | **0,9953** |
+Die Modelle wurden anhand der Kennzahlen MAE, RMSE und R² bewertet.
 
-Die linearen Modelle verwenden ausschließlich `air_temperature` und `square_feet`. Der Random Forest verwendet die zehn oben genannten Merkmale.
+| Modell                        | Merkmale |  MAE ↓ | RMSE ↓ |    R² ↑ |
+| ----------------------------- | -------: | -----: | -----: | ------: |
+| Lineare Regression            |        2 | 230,26 | 359,67 |  0,1649 |
+| Log-transformierte Regression |        2 | 224,47 | 426,45 | -0,1740 |
+| Random Forest                 |        2 | 151,01 | 259,10 |  0,5666 |
+| Random Forest                 |       10 |  15,93 |  47,97 |  0,9851 |
 
-Das Random-Forest-Modell basiert auf **500.000 Beobachtungen**, aufgeteilt in **400.000 Trainingsdaten** und **100.000 Testdaten**. Die Evaluation erfolgte auf dem separaten Testdatensatz.
+Die beiden Random-Forest-Modelle wurden mit denselben Trainings- und Testdaten ausgewertet. Die Ergebnisse der linearen Modelle stammen aus der vorherigen Auswertung und sind nur direkt vergleichbar, wenn dieselbe Datenaufteilung und Datenvorverarbeitung verwendet wurden.
 
-### Fehleranalyse der linearen Regression
+### Bewertungskennzahlen
 
-Die Residuenanalyse untersucht die Abweichungen zwischen den tatsächlichen und den vom Modell vorhergesagten Energieverbrauchswerten. Die Modellgüte wird anhand der Kennzahlen **MAE**, **RMSE** und **R²** bewertet.
+* **MAE (Mean Absolute Error):** Misst die durchschnittliche absolute Abweichung zwischen den tatsächlichen und den vorhergesagten Energieverbrauchswerten.
+* **RMSE (Root Mean Squared Error):** Bewertet die Vorhersagefehler und gewichtet größere Abweichungen stärker.
+* **R² (Bestimmtheitsmaß):** Gibt an, wie viel der Variabilität des Energieverbrauchs durch das Modell erklärt wird.
 
-### Random Forest – Fehleranalyse
+Niedrigere MAE- und RMSE-Werte sowie ein höherer R²-Wert weisen im Allgemeinen auf eine bessere Vorhersageleistung hin.
 
-Für den Random Forest ergeben sich folgende Modellkennzahlen:
+### Finales Random-Forest-Modell
 
-* **MAE:** 8,16
-* **RMSE:** 27,04
-* **R²:** 0,9953
+Das finale Random-Forest-Modell verwendet zehn Merkmale zur Vorhersage des Energieverbrauchs.
 
-Das Modell verwendet zehn Merkmale:
+**Verwendete Merkmale**
 
 ```text
 square_feet
@@ -312,7 +313,36 @@ month
 year
 ```
 
-Die Merkmale werden innerhalb der Pipeline mit einer **Median-Imputation** verarbeitet. Anschließend erfolgt die Vorhersage mit einem `RandomForestRegressor` mit **100 Bäumen**.
+**Zielvariable:** `meter_reading`
+
+**Aufteilung des Datensatzes**
+
+| Datensatz       | Anzahl der Beobachtungen |
+| --------------- | -----------------------: |
+| Gesamtdatensatz |                  500.000 |
+| Trainingsdaten  |                  400.000 |
+| Testdaten       |                  100.000 |
+
+**Modellergebnisse**
+
+| Kennzahl |   Wert |
+| -------- | -----: |
+| MAE      |  15,93 |
+| RMSE     |  47,97 |
+| R²       | 0,9851 |
+
+### Fehleranalyse
+
+Die Residuen beschreiben die Differenz zwischen den tatsächlichen und den vorhergesagten Werten:
+
+```text
+Residuum = Tatsächlicher Wert - Vorhergesagter Wert
+```
+
+Die Residuenanalyse hilft dabei, systematische Fehler und Beobachtungen mit großen Vorhersageabweichungen zu erkennen. Zusammen mit MAE, RMSE und R² ermöglicht sie eine Bewertung der Vorhersageleistung des Modells.
+
+Die Machine-Learning-Pipeline ersetzt fehlende Werte mithilfe einer **Median-Imputation**. Anschließend erfolgt die Vorhersage mit einem `RandomForestRegressor` mit **100 Entscheidungsbäumen**.
+
 
 ### Gespeichertes Random-Forest-Modell
 
