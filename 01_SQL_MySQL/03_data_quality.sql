@@ -1,38 +1,47 @@
 -- =====================================================================
--- 1. Datenqualität & Plausibilitätsprüfung
+-- ASHRAE Energy Analysis
+-- Datenqualität und Plausibilitätsprüfung
 -- =====================================================================
+
+USE ashrae_energy;
 
 
 -- =====================================================================
--- 1.1 Tabellenübersicht
+-- 1. Tabellenübersicht
 -- =====================================================================
+-- Überblick über die vorhandenen Tabellen.
 
 SHOW TABLES;
 
 
 -- =====================================================================
--- 1.2 Anzahl der Datensätze
+-- 2. Tabellenstruktur überprüfen
 -- =====================================================================
+-- Überprüfung der Spalten und Datentypen der relevanten Tabellen.
+
+DESCRIBE train;
+
+DESCRIBE building_metadata;
+
+DESCRIBE weather_train;
+
+
+-- =====================================================================
+-- 3. Anzahl der Datensätze überprüfen
+-- =====================================================================
+-- Prüfung der Anzahl der Datensätze in den wichtigsten Tabellen.
 
 SELECT COUNT(*) AS anzahl_datensaetze
 FROM train;
-DESCRIBE train;
+
 SELECT COUNT(*) AS anzahl_datensaetze
 FROM building_metadata;
 
 
--- Datenqualität der Tabelle train überprüfen.
-SELECT
-    COUNT(*) AS total,
-    SUM(building_id IS NULL) AS missing_building,
-    SUM(timestamp IS NULL) AS missing_timestamp,
-    SUM(meter IS NULL) AS missing_meter,
-    SUM(meter_reading IS NULL) AS missing_meter_reading
-FROM train;
-
 -- =====================================================================
--- 1.3 Erste Datensätze überprüfen
+-- 4. Erste Datensätze überprüfen
 -- =====================================================================
+-- Stichprobenartige Kontrolle der geladenen Daten.
 
 SELECT *
 FROM train
@@ -46,23 +55,12 @@ SELECT *
 FROM weather_train
 LIMIT 10;
 
--- 2. DATENSTRUKTUR UND DATENQUALITÄT
--- #####################################################################
 
 -- =====================================================================
--- 2.1 Tabellenstruktur überprüfen
+-- 5. Fehlende Werte in train
 -- =====================================================================
+-- Prüfung auf fehlende Werte in den zentralen Spalten der Tabelle train.
 
-DESCRIBE train;
-
-DESCRIBE building_metadata;
-
-DESCRIBE weather_train;
-
-
--- =====================================================================
--- 2.2 Fehlende Werte in train
--- =====================================================================
 SELECT
     COUNT(*) AS gesamt,
     SUM(building_id IS NULL) AS fehlend_building_id,
@@ -73,8 +71,10 @@ FROM ashrae_energy.train;
 
 
 -- =====================================================================
--- 2.3 Fehlende Werte in building_metadata
+-- 6. Fehlende Werte in building_metadata
 -- =====================================================================
+-- Prüfung auf fehlende Gebäude- und Metadaten.
+
 SELECT
     COUNT(*) AS gesamt,
     SUM(building_id IS NULL) AS fehlend_building_id,
@@ -87,8 +87,10 @@ FROM ashrae_energy.building_metadata;
 
 
 -- =====================================================================
--- 2.4 Fehlende Werte in weather_train
+-- 7. Fehlende Werte in weather_train
 -- =====================================================================
+-- Prüfung auf fehlende Wetterdaten.
+
 SELECT
     COUNT(*) AS gesamt,
     SUM(site_id IS NULL) AS fehlend_site_id,
@@ -103,21 +105,17 @@ SELECT
 FROM ashrae_energy.weather_train;
 
 
-
 -- =====================================================================
--- 2.5 NULL-Werte und 0-Werte im Energieverbrauch
+-- 8. NULL- und 0-Werte im Energieverbrauch
 -- =====================================================================
---
 -- NULL = fehlender Messwert
--- 0    = gültiger Messwert
+-- 0    = vorhandener Messwert mit Verbrauchswert 0
 --
--- Daher werden 0-Werte nicht als fehlende Daten betrachtet.
--- =====================================================================
+-- 0-Werte werden daher nicht als fehlende Daten betrachtet.
 
 SELECT
     COUNT(*) - COUNT(meter_reading) AS null_meter_reading
 FROM train;
-
 
 SELECT
     COUNT(*) AS zero_meter_reading
@@ -125,10 +123,12 @@ FROM train
 WHERE meter_reading = 0;
 
 
+-- =====================================================================
+-- 9. Datenqualität der Verbrauchswerte in train_full
+-- =====================================================================
+-- Prüfung auf fehlende, null und negative Verbrauchswerte
+-- sowie Ermittlung von Minimum und Maximum.
 
--- =====================================================================
--- Datenqualitätsprüfung der Verbrauchswerte
--- =====================================================================
 SELECT
     COUNT(*) AS gesamt,
     SUM(meter_reading IS NULL) AS fehlende_werte,
@@ -139,7 +139,11 @@ SELECT
 FROM train_full;
 
 
--- Datenqualitätsprüfung der Verbrauchswerte mit Prozentanteilen
+-- =====================================================================
+-- 10. Verbrauchswerte nach Null- und Positivwerten
+-- =====================================================================
+-- Berechnung der Anzahl und prozentualen Anteile
+-- von Null- und positiven Verbrauchswerten.
 
 SELECT
     COUNT(*) AS gesamt,
@@ -154,3 +158,36 @@ SELECT
         2
     ) AS anteil_positiv_prozent
 FROM train_full;
+
+
+-- =====================================================================
+-- 11. Allgemeine Prüfung der Energieverbrauchsdaten
+-- =====================================================================
+-- Zusammenfassende Prüfung der Verbrauchswerte in train_full.
+
+SELECT
+    COUNT(*) AS gesamt,
+    SUM(meter_reading IS NULL) AS fehlende_werte,
+    SUM(meter_reading < 0) AS negative_werte,
+    SUM(meter_reading = 0) AS nullverbrauch,
+    SUM(meter_reading > 0) AS positiver_verbrauch
+FROM train_full;
+
+-- =====================================================================
+-- 12. Analyse du Ausführungsplans mit EXPLAIN
+-- =====================================================================
+-- Überprüfung, wie MySQL die Abfrage ausführt und
+-- ob der Index auf primary_use verwendet wird.
+
+EXPLAIN
+SELECT
+    primary_use,
+    COUNT(*) AS anzahl_messungen,
+    SUM(meter_reading) AS gesamtverbrauch,
+    AVG(meter_reading) AS durchschnitt,
+    MIN(meter_reading) AS minimalverbrauch,
+    MAX(meter_reading) AS maximalverbrauch
+FROM ashrae_energy.train_full
+GROUP BY primary_use
+ORDER BY gesamtverbrauch DESC;
+

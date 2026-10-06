@@ -1,27 +1,34 @@
 -- =====================================================================
--- SQL-Datenanalyse & statistische Kennzahlen
+-- ASHRAE Energy Analysis
+-- Fachliche Analyse des Energieverbrauchs
 -- =====================================================================
+
+USE ashrae_energy;
+
 
 -- =====================================================================
 -- 1. Energieverbrauch nach Gebäudenutzung
 -- =====================================================================
+-- Vergleich der Anzahl der Messungen, des Gesamtverbrauchs,
+-- des durchschnittlichen, minimalen und maximalen Verbrauchs
+-- nach Gebäudenutzung.
 
 SELECT
     primary_use,
     COUNT(*) AS anzahl_messungen,
     ROUND(SUM(meter_reading), 2) AS gesamtverbrauch,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
+    ROUND(AVG(meter_reading), 2) AS durchschnitt,
+    ROUND(MIN(meter_reading), 2) AS minimalverbrauch,
+    ROUND(MAX(meter_reading), 2) AS maximalverbrauch
 FROM train_full
 GROUP BY primary_use
-ORDER BY durchschnittlicher_verbrauch DESC;
+ORDER BY gesamtverbrauch DESC;
 
 
 -- =====================================================================
 -- 2. Durchschnittlicher Verbrauch ohne Nullwerte
 -- =====================================================================
---
 -- Diese Analyse betrachtet nur positive Verbrauchswerte.
--- =====================================================================
 
 SELECT
     primary_use,
@@ -38,10 +45,8 @@ ORDER BY durchschnittlicher_verbrauch DESC;
 -- =====================================================================
 -- 3. Energieverbrauch nach Gebäudenutzung und Zählertyp
 -- =====================================================================
---
--- Diese Analyse vermeidet die direkte Vermischung
--- unterschiedlicher Zählertypen.
--- =====================================================================
+-- Vergleich des durchschnittlichen Verbrauchs nach Gebäudenutzung
+-- und Zählertyp.
 
 SELECT
     primary_use,
@@ -60,8 +65,30 @@ ORDER BY
 
 
 -- =====================================================================
--- 4. Gebäude mit dem höchsten Gesamtverbrauch
+-- 4. Energieverbrauch nach Zählertyp
 -- =====================================================================
+-- Vergleich der Anzahl der Messungen und des durchschnittlichen
+-- Verbrauchs nach Zählertyp.
+--
+-- Meter:
+-- 0 = Electricity
+-- 1 = ChilledWater
+-- 2 = Steam
+-- 3 = HotWater
+
+SELECT
+    meter,
+    COUNT(*) AS anzahl_messungen,
+    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
+FROM ashrae_energy.train_full
+GROUP BY meter
+ORDER BY durchschnittlicher_verbrauch DESC;
+
+
+-- =====================================================================
+-- 5. Gebäude mit dem höchsten Gesamtverbrauch
+-- =====================================================================
+-- Identifizierung der Gebäude mit dem höchsten Gesamtverbrauch.
 
 SELECT
     building_id,
@@ -77,12 +104,96 @@ ORDER BY gesamtverbrauch DESC
 LIMIT 10;
 
 
--- #####################################################################
--- 5. TECHNISCHE KONTROLLE DER DURCHSCHNITTSBERECHNUNG
--- #####################################################################
+-- =====================================================================
+-- 6. Entwicklung des Energieverbrauchs im Zeitverlauf
+-- =====================================================================
+-- Untersuchung der täglichen Entwicklung des durchschnittlichen
+-- Energieverbrauchs über den gesamten Analysezeitraum.
+
+SELECT
+    DATE(`timestamp`) AS datum,
+    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
+FROM ashrae_energy.train_full
+GROUP BY DATE(`timestamp`)
+ORDER BY datum;
+
+
+-- =====================================================================
+-- 7. Zusammenhang zwischen Außentemperatur und Energieverbrauch
+-- =====================================================================
+-- Untersuchung des Zusammenhangs zwischen Außentemperatur
+-- und durchschnittlichem Energieverbrauch.
+
+SELECT
+    ROUND(air_temperature, 0) AS temperatur,
+    COUNT(*) AS anzahl_messungen,
+    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
+FROM ashrae_energy.train_full
+WHERE air_temperature IS NOT NULL
+GROUP BY ROUND(air_temperature, 0)
+ORDER BY temperatur;
+
+
+-- =====================================================================
+-- 8. Monatlicher Vergleich der Zähler 1 und 3
+-- =====================================================================
+-- Vergleich der Verbrauchswerte und Nullverbrauchsraten
+-- im Gebäude 1017 im Jahr 2016.
+
+SELECT
+    DATE_FORMAT(`timestamp`, '%Y-%m') AS monat,
+    meter,
+    COUNT(*) AS anzahl_messungen,
+    SUM(
+        CASE
+            WHEN meter_reading = 0 THEN 1
+            ELSE 0
+        END
+    ) AS nullverbrauch,
+    ROUND(
+        100.0 * SUM(
+            CASE
+                WHEN meter_reading = 0 THEN 1
+                ELSE 0
+            END
+        ) / COUNT(*),
+        2
+    ) AS nullanteil_prozent,
+    ROUND(AVG(meter_reading), 2) AS durchschnitt
+FROM train_full
+WHERE building_id = 1017
+  AND meter IN (1, 3)
+  AND `timestamp` >= '2016-01-01'
+  AND `timestamp` < '2017-01-01'
+GROUP BY DATE_FORMAT(`timestamp`, '%Y-%m'), meter
+ORDER BY monat, meter;
+
+
+-- =====================================================================
+-- 9. Monatlicher Energieverbrauch nach Zählertyp
+-- =====================================================================
+-- Vergleich des monatlichen Gesamtverbrauchs der Zähler 1 und 3
+-- für Gebäude 1017 im Jahr 2016.
+
+SELECT
+    MONTH(`timestamp`) AS monat,
+    meter,
+    ROUND(SUM(meter_reading), 2) AS verbrauch
+FROM train_full
+WHERE building_id = 1017
+  AND YEAR(`timestamp`) = 2016
+  AND meter IN (1, 3)
+GROUP BY monat, meter
+ORDER BY meter, monat;
+
+
+-- =====================================================================
+-- 10. Technische Kontrolle der Durchschnittsberechnung
+-- =====================================================================
 -- Vergleich der manuellen Durchschnittsberechnung mit AVG().
--- Gültige Messwerte einschließlich 0 werden berücksichtigt;
--- NULL-Werte werden ignoriert. Die Differenz sollte nahe bei 0 liegen.
+-- Gültige Messwerte ohne 0 werden berücksichtigt;
+-- NULL-Werte werden ignoriert.
+-- Die Differenz sollte nahe bei 0 liegen.
 
 SELECT
     primary_use,
@@ -123,71 +234,4 @@ FROM train_full
 GROUP BY primary_use
 
 ORDER BY primary_use;
-
-
-- ╔══════════════════════════════════════════════════════════════════════════╗
---║ PROJEKT: ASHRAE Energy Prediction                                        ║
---║ ABSCHNITT: 16 - Explorative Analyse                                      ║
---║ ZIEL: Untersuchung des Energieverbrauchs nach Zeit, Temperatur,          ║
---║       Gebäudenutzung, Zählertyp und Gebäude                              ║
---╚══════════════════════════════════════════════════════════════════════════╝
-
-
--- =================================================================
--- 6. Entwicklung des Energieverbrauchs im Zeitverlauf
--- Zweck:
--- Untersuchung der täglichen Entwicklung des durchschnittlichen
--- Energieverbrauchs über den gesamten Analysezeitraum.
--- =================================================================
-
-SELECT
-    DATE(`timestamp`) AS datum,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
-FROM ashrae_energy.train_full
-GROUP BY DATE(`timestamp`)
-ORDER BY datum;
-
-
--- =================================================================
--- 7. Zusammenhang zwischen Außentemperatur und Energieverbrauch
--- Zweck:
--- Untersuchung des Zusammenhangs zwischen Außentemperatur
--- und durchschnittlichem Energieverbrauch.
--- =================================================================
-
-SELECT
-    ROUND(air_temperature, 0) AS temperatur,
-    COUNT(*) AS anzahl_messungen,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
-FROM ashrae_energy.train_full
-WHERE air_temperature IS NOT NULL
-GROUP BY ROUND(air_temperature, 0)
-ORDER BY temperatur;
-
-
--- =================================================================
--- 8. Energieverbrauch nach Zählertyp
--- Zweck:
--- Vergleich der Messungen und des durchschnittlichen Verbrauchs
--- nach Zählertyp.
---
--- Meter:
--- 0 = Electricity
--- 1 = ChilledWater
--- 2 = Steam
--- 3 = HotWater
--- =================================================================
-
-SELECT
-    meter,
-    COUNT(*) AS anzahl_messungen,
-    ROUND(AVG(meter_reading), 2) AS durchschnittlicher_verbrauch
-FROM ashrae_energy.train_full
-GROUP BY meter
-ORDER BY durchschnittlicher_verbrauch DESC;
-
-
-
-
-
 
