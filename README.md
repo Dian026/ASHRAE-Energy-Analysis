@@ -549,7 +549,7 @@ Diese drei Modelle verwenden dieselben zwei Merkmale (`air_temperature`, `square
 
 Mit `GroupShuffleSplit` wurde geprüft, wie gut das Modell auf Gebäuden funktioniert, die im Training nicht vorkamen.
 
-Dabei wurden 40 Gebäude für das Training und 10 Gebäude für den Test verwendet. Kein Gebäude kommt in beiden Datensätzen vor.
+Dabei wurden 47 Gebäude für das Training und 12 Gebäude für den Test verwendet (insgesamt 59 Gebäude). Kein Gebäude kommt in beiden Datensätzen vor.
 
 | Evaluationsstrategie   |    MAE |   RMSE |     R² |
 | ---------------------- | -----: | -----: | -----: |
@@ -566,9 +566,9 @@ Die Ergebnisse zeigen, dass das Modell Schwierigkeiten hat, den Energieverbrauch
 
 ### Grenzen und Ausblick
 
-Die gebäudebasierte Evaluation basiert auf einer einzigen Datenaufteilung mit zehn Testgebäuden. Eine Kreuzvalidierung mit `GroupKFold` könnte die Stabilität der Ergebnisse überprüfen.
+Die gebäudebasierte Evaluation basiert auf einer einzigen Datenaufteilung mit zwölf Testgebäuden. Eine Kreuzvalidierung mit `GroupKFold` könnte die Stabilität der Ergebnisse überprüfen.
 
-Vor einem direkten Vergleich sollten außerdem die Datenfilter und die Vorverarbeitung beider Evaluationen auf Übereinstimmung geprüft werden. Eine zusätzliche Residuenanalyse kann helfen, systematische Vorhersagefehler zu erkennen.
+Die Stichprobe (500.000 Messungen) enthält 59 Gebäude des Zählertyps Strom und wird mit `ORDER BY building_id, timestamp` reproduzierbar ausgewählt. Eine zusätzliche Residuenanalyse kann helfen, systematische Vorhersagefehler zu erkennen.
 
 ### Gespeichertes Random-Forest-Modell
 
@@ -625,7 +625,7 @@ Durch die Verwendung eines Random Forest können auch **nichtlineare Zusammenhä
 
 Mit einem **R² von 0,9846**, einem **MAE von 16,12** und einem **RMSE von 48,62** zeigt das finale Modell eine hohe Vorhersageleistung auf dem verwendeten Testdatensatz.
 
-> **Hinweis zur Aussagekraft:** Der Train-Test-Split erfolgt zufällig. Da Gebäude in stündlichen Messreihen sowohl in den Trainings- als auch in den Testdaten vorkommen, kann die Vorhersagequalität für vollständig unbekannte Gebäude geringer ausfallen. Eine Validierung mit gebäudebasierter Trennung wäre ein sinnvoller nächster Schritt.
+> **Hinweis zur Aussagekraft:** Der Train-Test-Split erfolgt zufällig. Da Gebäude in stündlichen Messreihen sowohl in den Trainings- als auch in den Testdaten vorkommen, gelten die Kennzahlen für bekannte Gebäude. Die gebäudebasierte Evaluation (siehe Abschnitt „Generalisierung auf unbekannte Gebäude“) zeigt für unbekannte Gebäude ein deutlich niedrigeres R² von 0,1945.
 
 ---
 
